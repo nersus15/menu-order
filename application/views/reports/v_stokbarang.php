@@ -17,6 +17,8 @@
 
 			<!-- Main Content -->
 			<div class="main-content">
+
+				
 				<section class="section">
 					<div class="section-header d-flex justify-content-between">
 						<h1><?= $title; ?></h1>
@@ -26,7 +28,8 @@
 					<div class="flash-data" data-flashdata="<?= $this->session->flashdata('message'); ?>"></div>
 					<!-- end alert flashdata -->
 					<div class="row">
-						<div class="col-12">
+						<div class="col-12">													
+							</div>
 							<div class="card">
 								<div class="card-body">
 									<div class="table-responsive">
@@ -40,7 +43,8 @@
 													<th>Nama Barang</th>
 													<th>Stock</th>
 													<th>Satuan</th>
-													<th>Harga</th>
+													<th>Biaya</th>
+													<th>Total</th>
 													<th>Deskripsi</th>
 													<th>Kategori</th>
 												</tr>
@@ -54,7 +58,8 @@
 														<td><?= $item["item_name"] ?></td>
 														<td><?= $item["item_stock"] ?></td>
 														<td><?= $item["unit_name"] ?></td>
-														<td><?= $item["item_price"] ?> / <?= $item["unit_name"] ?></td>
+														<td><?= rupiah_format($item["item_price"]) ?> / <?= $item["unit_name"] ?></td>
+														<td><?= rupiah_format($item["item_price"] * $item["item_stock"]) ?></td>
 														<td><?= $item["item_description"] ?></td>
 														<td><?= $item["category_name"] ?></td>
 													</tr>
@@ -79,13 +84,6 @@
 	<!-- ./scripts -->
 
     <script>
-        // const base_path = "<?= base_url() ?>"
-        // $("#cetak_pdf_stokbarang").click(function(e){
-        //     e.preventDefault();
-        //     location.href = base_path + 'report/cetakstok';
-        //     // window.open(base_path + 'report/cetakstok', '_blank', 'location=yes,height=10,width=10,scrollbars=yes,status=yes')
-        // })
-        
     </script>
 
 </body>

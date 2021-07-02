@@ -2,13 +2,25 @@
 class Item_model extends CI_Model
 {
 
-	public function getAllItems()
+	public function getAllItems($filters = [])
 	{
-		$this->db->select("*");
-		$this->db->from("items");
-		$this->db->join("categories", "categories.id_category = items.id_category");
-		$this->db->join("units", "units.id_unit = items.id_unit");
-		return $this->db->get()->result_array();
+		$query = $this->db->select("*")
+			->from("items")
+			->join("categories", "categories.id_category = items.id_category")
+			->join("units", "units.id_unit = items.id_unit");
+
+		if(!empty($filters)){
+			foreach($filters as $filter){
+				// $operator = isset($filter['operator']) && !empty($operator) ? $filter['operator'] : "=";
+				if($filter['type'] == 'or')
+					$query->or_where($filter['q']);
+				else
+					$query->where($filter['q']);
+			}
+		}
+
+
+		return $query->get()->result_array();
 	}
 
 	public function getItemById($id)
