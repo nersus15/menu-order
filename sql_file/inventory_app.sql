@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.0
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 11, 2021 at 08:58 PM
--- Server version: 10.4.19-MariaDB
--- PHP Version: 7.4.19
+-- Host: localhost
+-- Generation Time: Jul 02, 2021 at 04:22 AM
+-- Server version: 10.4.17-MariaDB
+-- PHP Version: 8.0.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -88,7 +88,20 @@ CREATE TABLE `incoming_items` (
 --
 
 INSERT INTO `incoming_items` (`id_incoming_items`, `id_items`, `id_supplier`, `incoming_item_code`, `incoming_item_qty`, `incoming_item_date`) VALUES
-(2, 1, 2, 'TRX-M11062021001', 21, '2021-06-11 18:40:19');
+(2, 1, 2, 'TRX-M11062021001', 21, '2021-06-11 18:40:19'),
+(3, 1, 2, 'TRX-M23062021002', 32, '2021-06-23 12:59:02'),
+(4, 1, 1, 'TRX-M23062021003', 6, '2021-06-23 13:21:57'),
+(5, 1, 1, 'TRX-M23062021003', 6, '2021-06-23 13:26:08'),
+(6, 1, 1, 'TRX-M23062021003', 6, '2021-06-23 13:27:12'),
+(7, 2, 1, 'TRX-M23062021004', 1, '2021-06-23 13:31:06'),
+(8, 1, 1, 'TRX-M23062021005', 2, '2021-06-23 13:38:33'),
+(9, 2, 2, 'TRX-M23062021006', 33, '2021-06-23 13:38:54'),
+(10, 2, 1, 'TRX-M23062021007', 2, '2021-06-23 13:40:31'),
+(11, 2, 1, 'TRX-M23062021008', 1, '2021-06-23 13:40:50'),
+(12, 1, 1, 'TRX-M23062021009', 6, '2021-06-23 13:41:33'),
+(13, 2, 2, 'TRX-M23062021010', 4, '2021-06-23 13:43:16'),
+(14, 3, 2, 'TRX-M24062021011', 5, '2021-06-24 15:16:38'),
+(15, 3, 2, 'TRX-M24062021012', 2, '2021-06-24 15:24:22');
 
 --
 -- Triggers `incoming_items`
@@ -96,6 +109,7 @@ INSERT INTO `incoming_items` (`id_incoming_items`, `id_items`, `id_supplier`, `i
 DELIMITER $$
 CREATE TRIGGER `barang_masuk` AFTER INSERT ON `incoming_items` FOR EACH ROW BEGIN
 	UPDATE items SET item_stock=item_stock+NEW.incoming_item_qty
+    
     WHERE id_item = NEW.id_items;
 END
 $$
@@ -126,8 +140,9 @@ CREATE TABLE `items` (
 --
 
 INSERT INTO `items` (`id_item`, `id_category`, `id_unit`, `item_code`, `item_name`, `item_image`, `item_stock`, `item_stock_min`, `item_price`, `item_description`, `created_at`) VALUES
-(1, 1, 3, 'BRG23042021001', 'Monitor SPC Pro SM-24', 'BRG23042021001.jpeg', 52, 0, 1400000, 'Monitor SPC PRO SM-24, Brand Lokal dengan Kualitas Mantap', '2021-06-11 18:40:19'),
-(2, 4, 2, 'BRG11062021002', 'test', 'BRG11062021002.png', 79, 0, 6000, 'ashajhsasasasas', '2021-06-11 18:57:48');
+(1, 1, 3, 'BRG23042021001', 'Monitor SPC Pro SM-24', 'BRG23042021001.jpeg', 110, 0, 1400000, 'Monitor SPC PRO SM-24, Brand Lokal dengan Kualitas Mantap', '2021-06-23 13:41:33'),
+(2, 4, 2, 'BRG11062021002', 'test', 'BRG11062021002.png', 120, 0, 50000, 'ashajhsasasasas', '2021-06-23 13:43:16'),
+(3, 1, 3, 'BRG24062021003', 'PCB', 'default.png', 8, 0, 290400, 'Testing Average', '2021-06-24 15:52:27');
 
 -- --------------------------------------------------------
 
@@ -316,13 +331,13 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `incoming_items`
 --
 ALTER TABLE `incoming_items`
-  MODIFY `id_incoming_items` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_incoming_items` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_item` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `outcoming_items`

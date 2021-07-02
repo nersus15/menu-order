@@ -22,9 +22,6 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 .idea/*
 .vscode/*
 
-# SQL FILE
-.sql_file/*
-
 ## Sublime Text cache files
 *.tmlanguage.cache
 *.tmPreferences.cache
