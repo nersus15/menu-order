@@ -20,7 +20,11 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 #-------------------------
 /nbproject/
 .idea/*
-.vscode/
+.vscode/*
+
+# SQL FILE
+.sql_file/*
+
 ## Sublime Text cache files
 *.tmlanguage.cache
 *.tmPreferences.cache
