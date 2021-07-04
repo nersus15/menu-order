@@ -27,6 +27,7 @@ class Item extends CI_Controller
 
 	public function create()
 	{
+		$err = null;
 		$data = [
 			"title" => "Tambah Data Barang",
 			"categories" => $this->db->get("categories")->result_array(),
@@ -38,20 +39,19 @@ class Item extends CI_Controller
 		if ($this->form_validation->run() == FALSE) {
 			$this->load->view("items/v_create", $data);
 		} else {
-			// var_dump("OK");die;
-			// if user upload item image
 			$itemImage = "default.png";
-			if (!empty($$_FILES["item_image"]['tmp_name'])) {
+			if (!empty($_FILES["item_image"]['tmp_name'])) {
 				$config = [
 					"allowed_types" => "jpg|jpeg|png|bmp|gif",
-					"upload_path" => "./assets/uploads/items/",
+					"upload_path" => ASSET_PATH . "uploads/items",
 					"file_name" => $this->input->post("item_code")
 				];
 				$this->load->library("upload", $config);
 				if ($this->upload->do_upload("item_image")) {
 					$itemImage = $this->upload->data("file_name");
-				} else {
-					return "default.png";
+				}else{
+					$err = array('error' => $this->upload->display_errors());
+					$err = join(' ', $err);
 				}
 			}
 			$itemData = [
@@ -66,7 +66,7 @@ class Item extends CI_Controller
 			];
 
 			$this->Item_model->insertNewItem($itemData);
-			$this->session->set_flashdata('message', 'Ditambah');
+			$this->session->set_flashdata('message', 'Ditambah ' . $err);
 			redirect('item');
 		}
 	}

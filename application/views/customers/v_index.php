@@ -25,7 +25,10 @@
 					<!-- alert flashdata -->
 					<?php
 						$flash = $this->session->flashdata('message');
-						echo '<div class="alert alert-'. $flash['type'] .'">' . $flash['message'] . '</div>'
+						if(!empty($flash)){
+							echo '<div class="alert alert-'. $flash['type'] .'">' . $flash['message'] . '</div>';
+							unset($_SESSION['message']);
+						}
 					?>
 					<!-- end alert flashdata -->
 					<div class="row">
