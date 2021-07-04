@@ -1,4 +1,7 @@
 <?php
+
+use Spipu\Html2Pdf\Tag\Html\Em;
+
 defined('BASEPATH') or exit('No direct script access allowed');
 
 class Item extends CI_Controller
@@ -139,7 +142,11 @@ class Item extends CI_Controller
 	{
 		$itemId = encode_php_tags($id);
 		$query = $this->Item_model->cekItemStock($itemId);
-		output_json($query);
+		// output_json($query); Ntah dapat function darimana, jadi ganti dulu
+		
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($query));
 	}
 
 	private function _validateFormRequest()
