@@ -46,7 +46,7 @@ class Item extends CI_Controller
 			if (!empty($_FILES["item_image"]['tmp_name'])) {
 				$config = [
 					"allowed_types" => "jpg|jpeg|png|bmp|gif",
-					"upload_path" => ASSET_PATH . "uploads/items",
+					"upload_path" => "./assets/uploads/items/",
 					"file_name" => $this->input->post("item_code")
 				];
 				$this->load->library("upload", $config);
@@ -88,7 +88,7 @@ class Item extends CI_Controller
 			$this->load->view("items/v_update", $data);
 		} else {
 			$itemImage = $_FILES["item_image"];
-			if ($itemImage) {
+			if (!empty($itemImage)) {
 				$config = [
 					"allowed_types" => "jpg|jpeg|png|bmp|gif",
 					"upload_path" => "./assets/uploads/items/",
