@@ -42,7 +42,7 @@ class Supplier extends CI_Controller
 			];
 
 			$this->Supplier_model->insertNewSupplier($supplierData);
-			$this->session->set_flashdata('message', 'Ditambah');
+			$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
 			redirect('supplier');
 		}
 	}
@@ -67,7 +67,7 @@ class Supplier extends CI_Controller
 			];
 
 			$this->Supplier_model->updateSelectedSupplier($supplierData, $id);
-			$this->session->set_flashdata('message', 'Diubah');
+			$this->session->set_flashdata('message', ['message' => 'Diubah', 'type' => 'success']);
 			redirect('supplier');
 		}
 	}
@@ -76,7 +76,7 @@ class Supplier extends CI_Controller
 	{
 
 		$this->Supplier_model->deleteSelectedSupplier($id);
-		$this->session->set_flashdata('message', 'Dihapus');
+		$this->session->set_flashdata('message', ['message' => 'Dihapus', 'type' => 'success']);
 		redirect('supplier');
 	}
 

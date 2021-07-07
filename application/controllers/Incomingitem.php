@@ -42,7 +42,7 @@ class Incomingitem extends CI_Controller
 			$this->load->view("incoming_items/v_create", $data);
 		} else {			
 			$this->IncomingItem_model->insertNewIncomingItem($this->input->post());
-			$this->session->set_flashdata('message', 'Ditambah');
+			$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
 			redirect('incomingitem');
 		}
 	}
@@ -50,7 +50,7 @@ class Incomingitem extends CI_Controller
 	public function delete($id)
 	{
 		$this->IncomingItem_model->deleteSelectedIncomingItem($id);
-		$this->session->set_flashdata('message', 'Dihapus');
+		$this->session->set_flashdata('message', ['message' => 'Dihapus', 'type' => 'success']);
 		redirect('incomingitem');
 	}
 }

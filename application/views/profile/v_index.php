@@ -42,7 +42,12 @@
 									</div>
 								</div>
 							</div>
-							<?= $this->session->flashdata("message"); ?>
+						<?php $flash = $this->session->flashdata('message');
+							if(!empty($flash)){
+								echo '<div class="alert alert-'. $flash['type'] .'">' . $flash['message'] . '</div>';
+								unset($_SESSION['message']);
+							}
+						?>
 						</div>
 						<div class="col-8">
 							<div class="card">

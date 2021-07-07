@@ -60,7 +60,7 @@ class Profile extends CI_Controller
 
 
 			$this->Profile_model->updateProfile($profileData);
-			$this->session->set_flashdata('message', '<div class="alert alert-success">Profile Berhasil diperbarui</div>');
+			$this->session->set_flashdata('message', ['message' => 'Profile Berhasil diperbarui', 'type' => 'success']);
 			redirect("profile");
 		}
 	}
@@ -83,11 +83,11 @@ class Profile extends CI_Controller
 			$currentPassword = $this->input->post("current_password");
 			$newPassword = $this->input->post("new_password");
 			if (password_verify($currentPassword, $data["users_session"]["user_password"])) {
-				$this->session->set_flashdata('message', '<div class="alert alert-danger">Password kamu salah</div>');
+				$this->session->set_flashdata('message', ['message' => 'Password kamu salah', 'type' => 'danger']);
 				redirect("profile");
 			} else {
 				if ($currentPassword == $newPassword) {
-					$this->session->set_flashdata('message', '<div class="alert alert-danger">Password baru tidak boleh sama dengan sebelumnya</div>');
+					$this->session->set_flashdata('message', ['message' => 'Password baru tidak boleh sama dengan sebelumnya', 'type' => 'danger']);
 					redirect("profile");
 				} else {
 					// password sudah bisa diterima
@@ -95,7 +95,7 @@ class Profile extends CI_Controller
 
 					$this->Profile_model->updatePassword($passwordHash);
 
-					$this->session->set_flashdata('message', '<div class="alert alert-success">Silahkan login dengan password baru</div>');
+					$this->session->set_flashdata('message', ['message' => 'Silahkan login dengan password baru', 'type' => 'success']);
 					redirect("profile");
 				}
 			}

@@ -69,7 +69,7 @@ class Item extends CI_Controller
 			];
 
 			$this->Item_model->insertNewItem($itemData);
-			$this->session->set_flashdata('message', 'Ditambah ' . $err);
+			$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
 			redirect('item');
 		}
 	}
@@ -120,7 +120,7 @@ class Item extends CI_Controller
 			];
 
 			$this->Item_model->updateSelectedItem($itemData, $id);
-			$this->session->set_flashdata('message', 'Diubah');
+			$this->session->set_flashdata('message', ['message' => 'Diubah', 'type' => 'success']);
 			redirect('item');
 		}
 	}
@@ -134,7 +134,7 @@ class Item extends CI_Controller
 		}
 
 		$this->Item_model->deleteSelectedItem($id);
-		$this->session->set_flashdata('message', 'Dihapus');
+		$this->session->set_flashdata('message', ['message' => 'Dihapus', 'type' => 'success']);
 		redirect('item');
 	}
 

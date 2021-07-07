@@ -42,7 +42,7 @@ class Customer extends CI_Controller
 			];
 
 			$this->Customer_model->insertNewCustomer($customerData);
-			$this->session->set_flashdata('message', 'Ditambah');
+			$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
 			redirect('customer');
 		}
 	}
@@ -68,7 +68,7 @@ class Customer extends CI_Controller
 			];
 
 			$this->Customer_model->updateSelectedCustomer($customerData, $id);
-			$this->session->set_flashdata('message', 'Diubah');
+			$this->session->set_flashdata('message', ['message' => 'Diubah', 'type' => 'success']);
 			redirect('customer');
 		}
 	}

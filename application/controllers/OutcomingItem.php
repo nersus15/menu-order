@@ -45,7 +45,7 @@ class Outcomingitem extends CI_Controller
 				"outcoming_item_qty" => $this->input->post("outcoming_item_qty")
 			];
 			$this->Outcomingitem_model->insertNewOutcomingItem($outcomingItemData);
-			$this->session->set_flashdata('message', 'Ditambah');
+			$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
 			redirect('outcomingitem');
 		}
 	}
@@ -53,7 +53,7 @@ class Outcomingitem extends CI_Controller
 	public function delete($id)
 	{
 		$this->Outcomingitem_model->deleteSelectedOutcomingItem($id);
-		$this->session->set_flashdata('message', 'Dihapus');
+		$this->session->set_flashdata('message', ['message' => 'Dihapus', 'type' => 'success']);
 		redirect('outcomingitem');
 	}
 }

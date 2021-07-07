@@ -11,7 +11,6 @@ class Item_model extends CI_Model
 
 		if(!empty($filters)){
 			foreach($filters as $filter){
-				// $operator = isset($filter['operator']) && !empty($operator) ? $filter['operator'] : "=";
 				if($filter['type'] == 'or')
 					$query->or_where($filter['q']);
 				else

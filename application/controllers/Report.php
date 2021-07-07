@@ -1,4 +1,7 @@
 <?php
+
+use Spipu\Html2Pdf\Tag\Html\Em;
+
 class Report extends CI_Controller
 {
 
@@ -180,11 +183,26 @@ class Report extends CI_Controller
 	function stok()
 	{
 		$this->load->model('Item_model');
-		$items = $this->Item_model->getAllItems();
+		$filter = $_GET;
+		$bulan = date('n');
+		$tahun = date('Y');
 
+		if(!empty($filter)){
+			$bulan = $filter['b'];
+			$tahun = $filter['t'];
+		}
+		$q = [
+			['type' => 'and', 'q' => 'YEAR(items.created_at) = ' . $tahun],
+			['type' => 'and', 'q' => 'MONTH(items.created_at) = ' . $bulan]
+		];
+		$created_at = $this->db->select("MAX(YEAR(created_at)) max, MIN(YEAR(created_at)) min")->get('items')->row_array();
+		$items = $this->Item_model->getAllItems($q);
 		$data = [
 			'title' => "Rekap Stok Barang",
-			'items' => $items
+			'items' => $items,
+			'created_at' => $created_at,
+			'def_bulan' =>  $bulan, 
+			'def_tahun' => $tahun, 
 		];
 
 		$this->load->view('reports/v_stokbarang', $data);
@@ -193,13 +211,21 @@ class Report extends CI_Controller
 	function cetakstok()
 	{
 		$this->load->model('Item_model');
-		$items = $this->Item_model->getAllItems();
-		if (empty($items)) {
-			$this->session->set_flashdata('message', ['message' => 'Data Tidak Ditemukan', 'type' => 'danger']);
-			redirect("report/reporttransactions");
+		$filter = $_GET;
+		$bulan = date('n');
+		$tahun = date('Y');
+
+		if(!empty($filter)){
+			$bulan = $filter['b'];
+			$tahun = $filter['t'];
 		}
+		$q = [
+			['type' => 'and', 'q' => 'YEAR(items.created_at) = ' . $tahun],
+			['type' => 'and', 'q' => 'MONTH(items.created_at) = ' . $bulan]
+		];
+		$items = $this->Item_model->getAllItems($q);
 		ob_start();
-		$this->load->view("reports/template_reportstok.php", ['items' => $items]);
+		$this->load->view("reports/template_reportstok.php", ['items' => $items, "def_tahun" => $tahun, "def_bulan" => $bulan]);
 		$html = ob_get_clean();
 
 		buat_pdf($html, 'Laporan_Stok_Barang.pdf');
