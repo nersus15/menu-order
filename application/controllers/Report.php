@@ -129,7 +129,7 @@ class Report extends CI_Controller
 				];
 
 				if (!$data["transaksi_masuk"]) {
-					$this->session->set_flashdata('message', '<div class="alert alert-danger">Data Tidak Ditemukan</div>');
+					$this->session->set_flashdata('message', ['message' => 'Data Tidak Ditemukan', 'type' => 'danger']);
 					redirect("report/reporttransactions");
 				}
 

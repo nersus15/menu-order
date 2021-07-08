@@ -77,7 +77,7 @@ class Customer extends CI_Controller
 	{
 
 		$this->Customer_model->deleteSelectedCustomer($id);
-		$this->session->set_flashdata('message', 'Dihapus');
+		$this->session->set_flashdata('message',  ['message' => 'Dihapus', 'type' => 'success']);
 		redirect('customer');
 	}
 

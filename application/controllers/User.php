@@ -61,7 +61,7 @@ class User extends CI_Controller
 			];
 
 			$this->User_model->insertNewUser($userData);
-			$this->session->set_flashdata('message', 'Ditambah');
+			$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
 			redirect('user');
 		}
 	}
@@ -111,7 +111,7 @@ class User extends CI_Controller
 			];
 
 			$this->User_model->updateSelectedUser($userData, $id);
-			$this->session->set_flashdata('message', 'Diupdate');
+			$this->session->set_flashdata('message', ['message' => 'Diubah', 'type' => 'success']);
 			redirect('user');
 		}
 	}
@@ -124,7 +124,7 @@ class User extends CI_Controller
 		}
 
 		$this->User_model->deleteSelectedUser($id);
-		$this->session->set_flashdata('message', 'Dihapus');
+		$this->session->set_flashdata('message',  ['message' => 'Dihapus', 'type' => 'success']);
 		redirect('user');
 	}
 }
