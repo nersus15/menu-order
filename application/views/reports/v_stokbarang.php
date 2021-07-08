@@ -27,7 +27,13 @@ $bulan = [
 						<a id="cetak_pdf_stokbarang" href="#" target="_blank" class="btn btn-primary btn-lg">Cetak Pdf</a>
 					</div>
 					<!-- alert flashdata -->
-					<div class="flash-data" data-flashdata="<?= $this->session->flashdata('message'); ?>"></div>
+					<?php
+						$flash = $this->session->flashdata('message');
+						if(!empty($flash)){
+							echo '<div class="alert alert-'. $flash['type'] .'">' . $flash['message'] . '</div>';
+							unset($_SESSION['message']);
+						}
+					?>
 					<!-- end alert flashdata -->
 					<div class="row">
 						<div class="col-12">
