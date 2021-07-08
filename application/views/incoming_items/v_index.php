@@ -23,8 +23,15 @@
 						<a href="<?= base_url("incomingitem/create") ?>" class="btn btn-primary btn-lg">Tambah Barang Masuk</a>
 					</div>
 					<!-- alert flashdata -->
+						<?php
+						$flash = $this->session->flashdata('message');
+						if(!empty($flash)){
+							echo '<div class="alert alert-'. $flash['type'] .'">' . $flash['message'] . '</div>';
+							unset($_SESSION['message']);
+						}
+					?>
 					<!-- end alert flashdata -->
-
+						
 					<div class="row">
 						<div class="col-12">
 							<div class="card">
