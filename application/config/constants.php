@@ -85,3 +85,15 @@ defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automat
 defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 
 define("ASSET_PATH", str_replace("system/", "assets/", BASEPATH));
+
+
+define('MYSQL_TIMESTAMP_FORMAT', 'Y-m-d H:i:s');
+define('MYSQL_DATE_FORMAT', 'Y-m-d');
+define('ASSETS_PATH', str_replace('application' . DIRECTORY_SEPARATOR, '', APPPATH) . 'public'.DIRECTORY_SEPARATOR .'assets' . DIRECTORY_SEPARATOR);
+define('DOCS_PATH', str_replace('application' . DIRECTORY_SEPARATOR, '', APPPATH) . 'public'.DIRECTORY_SEPARATOR.'docs' . DIRECTORY_SEPARATOR);
+define ('IS_CORS_ACTIVE', false);
+define('SYNC_DATAUSER', false);
+define('KAS_KECIL', array('K01', 'K02', 'K03', 'K04', 'K05'));
+define('VENDOR_PATH', str_replace('application' . DIRECTORY_SEPARATOR, '', APPPATH) . 'vendor' .DIRECTORY_SEPARATOR);
+define('ROOT', str_replace('application/config', '',__DIR__));
+define("CONTROLLER_PATH", APPPATH . "controllers" . DIRECTORY_SEPARATOR);

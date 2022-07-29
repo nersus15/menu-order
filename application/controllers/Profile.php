@@ -14,6 +14,7 @@ class Profile extends CI_Controller
 
 	public function index()
 	{
+		
 		$data["title"] = "Profile Saya";
 
 		$this->load->view('profile/v_index', $data);

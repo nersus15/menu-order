@@ -41,8 +41,27 @@ class Auth extends CI_Controller
 					"created_at" => $userData["created_at"],
 
 				];
+				$tmp = $this->db->select('w1.id as idwil, w1.nama as wilnama, w1.level as willevel')
+					->from('users')
+					->join('wilayah w1', 'w1.id = users.wilayah')
+					->where('users.id_user', $userData['id_user'])->get()->row_array();
 
-				$this->session->set_userdata($data);
+				$gudang = $this->db->select('gudang.*, wilayah.nama as wilayah_gudang, wilayah.level as level_wilayah_gudang')
+					->from('users')
+					->join('admin_gudang', 'admin_gudang.admin = users.id_user')
+					->join('gudang', 'gudang.id = admin_gudang.gudang')
+					->join('wilayah', 'wilayah.id = gudang.wilayah')
+					->get()->result();
+					
+				$data['gudang'] = [];
+				if(!empty($gudang)){
+					foreach($gudang as $v)
+						$data['gudang'][] = (array) $v;
+				}
+				if(!empty($tmp))
+					$data = array_merge($data, $tmp);
+
+				$this->session->set_userdata('login', $data);
 				redirect('dashboard');
 			} else {
 				$this->session->set_flashdata('message', ['message' => 'Password kamu salah', 'type' => 'danger']); 

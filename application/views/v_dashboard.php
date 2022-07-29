@@ -39,40 +39,7 @@
 								</div>
 							</a>
 						</div>
-						<div class="col-lg-3 col-md-6 col-sm-6 col-12">
-							<a href="<?= base_url("supplier") ?>">
-								<div class="card card-statistic-1">
-									<div class="card-icon bg-danger">
-										<i class="fas fa-truck-moving"></i>
-									</div>
-									<div class="card-wrap">
-										<div class="card-header">
-											<h4>Jumlah Supplier</h4>
-										</div>
-										<div class="card-body">
-											<?= $total_suppliers ?>
-										</div>
-									</div>
-								</div>
-							</a>
-						</div>
-						<div class="col-lg-3 col-md-6 col-sm-6 col-12">
-							<a href="<?= base_url("customer") ?>">
-								<div class="card card-statistic-1">
-									<div class="card-icon bg-warning">
-										<i class="fas fa-users"></i>
-									</div>
-									<div class="card-wrap">
-										<div class="card-header">
-											<h4>Jumlah Customers</h4>
-										</div>
-										<div class="card-body">
-											<?= $total_customers ?>
-										</div>
-									</div>
-								</div>
-							</a>
-						</div>
+						
 						<div class="col-lg-3 col-md-6 col-sm-6 col-12">
 							<a href="<?= base_url("item") ?>">
 								<div class="card card-statistic-1">

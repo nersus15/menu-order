@@ -3,8 +3,7 @@
 
 function must_login()
 {
-	$mustLogin = get_instance();
-	if (!$mustLogin->session->userdata('user_email')) {
+	if (!is_login()) {
 		redirect('auth');
 	}
 }
@@ -15,9 +14,4 @@ function must_admin()
 	if ($mustAdmin->session->userdata("user_role") !== "admin") {
 		redirect('auth/block');		
 	}
-}
-function rupiah_format($angka)
-{
-    $hasil_rupiah = "Rp. " . number_format($angka, 2, ',', '.');
-    return $hasil_rupiah;
 }

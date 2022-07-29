@@ -65,6 +65,12 @@ class CI_Controller {
 	 */
 	public $load;
 
+	/** @var CI_DB_query_builder */
+	public $db;
+
+	/** @var CI_Session */
+	public $session;
+
 	/**
 	 * Class constructor
 	 *
