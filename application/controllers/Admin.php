@@ -14,7 +14,7 @@ class Admin extends CI_Controller
 	public function index()
 	{
         $data = [
-            "title" => "Kelola Staff Se " . kapitalize(sessiondata('login', 'wilnama')),
+            "title" => "Kelola Admin Se " . kapitalize(sessiondata('login', 'wilnama')),
 			"items" => $this->User_model->userhirarkiby(['user_role="admin"'], true),
 			'flash_data' => $this->session->flashdata('message')
 		];

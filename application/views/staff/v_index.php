@@ -75,11 +75,11 @@
                                                             </ul>
                                                         </td>
                                                         <td>
-                                                            <img class="col-sm-12 col-md-6" style="width: 100%;" src="<?= assets_url('img/avatar/' . $item['user_avatar']) ?>" alt="">
+                                                            <img class="" style="width: 100%;" src="<?= assets_url('img/avatar/' . $item['user_avatar']) ?>" alt="">
                                                         </td>
 														<td>
 															<!-- <a href="" class="btn btn-icon btn-info"><i class="fas fa-eye"></i></a> -->
-															<a data-toggle="tooltip" data-placement="bottom" title="Update" href="<?= base_url("staff/update/" . $item['id_user']) ?>"class="btn btn-icon btn-info"><i class="fas fa-pencil-alt"></i></a>
+															<a data-toggle="tooltip" data-placement="bottom" title="Update" href="<?= base_url("user/update/" . $item['id_user'] . '/' . sandi('staff')) ?>"class="btn btn-icon btn-info"><i class="fas fa-pencil-alt"></i></a>
 															<a data-toggle="tooltip" data-placement="bottom" title="Keluarkan dari gudang" href="<?= base_url("staff/unsign/" . $item['id_user']) ?>" class="btn btn-icco btn-warning btn-delete"><i class="fas fa-eraser"></i></a>
 															<a data-toggle="tooltip" data-placement="bottom" title="Hapus" href="<?= base_url("staff/delete/" . $item['id_user']) ?>" class="btn btn-icco btn-danger btn-delete"><i class="fas fa-trash"></i></a>
 														</td>

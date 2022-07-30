@@ -69,7 +69,7 @@
 													<label for="gudang">Gudang</label>
 													<select <?= $role == 'admin' ? 'multiple':null ?>  name="gudang[]" id="gudang" class="form-control select2 <?= form_error('gudang') ? 'is-invalid' : ''; ?>">
 													<?php if($role == 'staff'): ?>	
-														<option value="" disabled selected>--Pilih Gudang--</option>
+														<option value="" selected>--Pilih Gudang--</option>
 													<?php endif ?>
 														<?php foreach ($gudang as $v) : ?>
 															<option data-level="<?= $v->level_wilayah?>" value="<?= $v->id ?>"><?= $v->nama . " - " . ($v->level_wilayah == '1' ? 'Prov. ' :( $v->level_wilayah == '3' ?  'Kec. ' : '') ).  kapitalize($v->wilayah_gudang) ?></option>

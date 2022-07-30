@@ -25,7 +25,7 @@ class User extends CI_Controller
 	public function create($role = null)
 	{
 		$this->load->model('Gudang_model');
-		$role = sandi($role) ?? $role;
+		$role = !empty($role) ? sandi($role) : $role;
 		$data = [
 			"title" => !in_array($role, ['admin', 'staff']) ? "Tambah User Baru"  : "Tambah User ". kapitalize($role) ." Baru",
 			'gudang' => $this->Gudang_model->getbyuser(),
@@ -95,53 +95,40 @@ class User extends CI_Controller
 		}
 	}
 
-	public function update($id)
+	public function update($id, $role = null)
 	{
+		$this->load->model('Gudang_model');
+		$role = !empty($role) ? sandi($role) : $role;
 		$data = [
-			"title" => "Update Data User",
-			"user" => $this->User_model->getUserById($id)
+			"title" => "Update Data User " . $role ,
+			"user" => $this->User_model->getUserById($id),
+			'role' => $role,
+			'gudang' => $this->Gudang_model->getbyuser(),
+			'wilayah' => $this->User_model->gethirarkiWilayah(),
 		];
 
-		$this->form_validation->set_rules('user_name', 'Nama', 'required');
-		$this->form_validation->set_rules('user_email', 'E-mail', 'required|valid_email');
-		$this->form_validation->set_rules('user_phone', 'Nomor HP', 'required');
-		$this->form_validation->set_rules('user_address', 'Alamat', 'required');
-		$this->form_validation->set_rules('user_role', 'Hak Akses', 'required');
+		$this->form_validation->set_rules('wilayah', 'Wilayah Kerja', 'required');
 		if ($this->form_validation->run() == FALSE) {
 			$this->load->view("users/v_update", $data);
 		} else {
-			$userAvatar = $_FILES["user_avatar"];
-			if ($userAvatar) {
-				$config["allowed_types"] = "jpg|jpeg|png|bmp|gif";
-				$config["upload_path"] = "./assets/uploads/users/";
-				$config["file_name"] = round(microtime(true) * 1000);
-				$this->load->library('upload', $config);
-				if ($this->upload->do_upload('user_avatar')) {
-					$user = $this->User_model->getUserById($id);
-					$oldAvatar = $user["user_avatar"];
-					if ($oldAvatar != "default.jpg") {
-						unlink('./assets/uploads/users/' . $oldAvatar);
+			$post = $this->input->post();
+			$this->db->where('id_user', $id)->update('users', ['wilayah' => $post['wilayah']]);
+			if($role == 'admin'){
+				$this->db->where('admin', $id)->delete('admin_gudang');
+				if(!empty($post['gudang'])){
+					foreach($post['gudang'] as $gudang){
+						$this->db->insert('admin_gudang', ['admin' => $id, 'gudang' => $gudang]);
 					}
-					$newAvatar = $this->upload->data("file_name");
-					$userAvatar = $newAvatar;
-				} else {
-					$user = $this->User_model->getUserById($id);
-					$userAvatar = $user["user_avatar"];
 				}
+			}else{
+				if(empty($post['gudang']))
+					$this->db->where('id_user', $id)->update('users', ['gudang' => null]);
+				else
+					$this->db->where('id_user', $id)->update('users', ['gudang' => $post['gudang'][0]]);
 			}
-			$userData = [
-				"user_name" => $this->input->post("user_name"),
-				"user_email" => $this->input->post("user_email"),
-				"user_phone" => $this->input->post("user_phone"),
-				"user_address" => $this->input->post("user_address"),
-				"user_avatar" => $userAvatar,
-				// "user_password" => password_hash($this->input->post("user_password"), PASSWORD_DEFAULT),
-				"user_role" => $this->input->post("user_role")
-			];
 
-			$this->User_model->updateSelectedUser($userData, $id);
 			$this->session->set_flashdata('message', ['message' => 'Diubah', 'type' => 'success']);
-			redirect('user');
+			redirect($role);
 		}
 	}
 

@@ -80,4 +80,8 @@ class Gudang extends CI_Controller
 		$this->session->set_flashdata('message', ['message' => 'Dihapus', 'type' => 'success']);
 		redirect('gudang');
 	}
+
+	function detail($gudang){
+		
+	}
 }

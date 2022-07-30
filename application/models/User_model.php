@@ -10,7 +10,26 @@ class User_model extends CI_Model
 
 	public function getUserById($id)
 	{
-		return $this->db->get_where("users", ["id_user" => $id])->row_array();
+		$user = $this->db->get_where("users", ["id_user" => $id])->row_array();
+		$gudang = [];
+		if($user['user_role'] == 'admin'){
+			$gudang = $this->db->select('gudang.id')
+				->join('admin_gudang', 'admin_gudang.admin = users.id_user')
+				->join('gudang', 'admin_gudang.gudang = gudang.id')
+				->where('id_user', $user['id_user'])
+				->get('users')->result_array();
+
+			if(!empty($gudang)){
+				$gudang = array_map(function($arr) {
+					return $arr['id'];
+				}, $gudang);
+			}
+			
+		}else{
+			$gudang =  explode(';', $user['gudang']);
+		}
+		$user['gudang'] = $gudang;
+		return $user;
 	}
 
 	public function insertNewUser($userData)

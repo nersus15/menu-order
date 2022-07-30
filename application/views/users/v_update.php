@@ -27,55 +27,38 @@
 								<div class="card-body">
 									<div class="row">
 										<div class="col-8 mx-auto">
-											<form action="<?= base_url("user/update/" . $user["id_user"]) ?>" method="post" enctype="multipart/form-data">
+											<?php if(!isset($role) || !in_array($role, ['admin', 'staff'])): ?>
+												<h4>Ilegal Aksess</h4>
+											<?php else: ?>
+											<form action="<?= base_url("user/update/". $user['id_user'] ."/" . sandi($role)) ?>" method="post" enctype="multipart/form-data">
 												<div class="form-group">
-													<label for="user_name">Nama User</label>
-													<input type="text" class="form-control <?= form_error('user_name') ? 'is-invalid' : ''; ?>" name="user_name" id="user_name" placeholder="Nama User" value="<?= $user["user_name"] ?>">
-													<?= form_error('user_name', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
-												</div>
-												<div class="form-group">
-													<label for="user_email">Email User</label>
-													<input type="text" class="form-control <?= form_error('user_email') ? 'is-invalid' : ''; ?>" name="user_email" id="user_email" placeholder="Email User" value="<?= $user["user_email"] ?>">
-													<?= form_error('user_email', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
-												</div>
-												<div class="form-group">
-													<label for="user_phone">Phone User</label>
-													<input type="text" class="form-control <?= form_error('user_phone') ? 'is-invalid' : ''; ?>" name="user_phone" id="user_phone" placeholder="Phone User" value="<?= $user["user_phone"] ?>">
-													<?= form_error('user_phone', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
-												</div>
-												<div class="form-group">
-													<label for="user_address">Alamat User</label>
-													<textarea name="user_address" id="user_address" rows="3" class="form-control <?= form_error('user_address') ? 'is-invalid' : ''; ?>"><?= $user["user_address"] ?></textarea>
-													<?= form_error('user_address', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
-												</div>
-												<div class="form-group">
-													<label for="user_avatar">Avatar</label>
-													<div class="row">
-														<div class="col-sm-4">
-															<img src="<?= base_url("assets/uploads/users/" . $user["user_avatar"]) ?>" width="100%">
-														</div>
-														<div class="col-sm-8">
-															<input type="file" class="form-control" name="user_avatar" id="user_avatar">
-														</div>
-
-													</div>
-												</div>
-												<div class="form-group">
-													<label for="user_role">Hak Akses</label>
-													<select name="user_role" id="user_role" class="form-control <?= form_error('user_role') ? 'is-invalid' : ''; ?>">
-														<option value="" disabled selected>--Pilih Hak Akses--</option>
-														<option value="admin" <?= $user["user_role"] == "admin" ? "selected" : "" ?>>Admin</option>
-														<option value="staff" <?= $user["user_role"] == "staff" ? "selected" : "" ?>>Staff</option>
+													<label for="wilayah">Wilayah Kerja</label>
+													<select name="wilayah" id="wilayah" class="form-control select2 <?= form_error('wilayah') ? 'is-invalid' : ''; ?>">
+														<option value="" disabled>--Wilayah--</option>
+														<?php foreach ($wilayah as $v) : ?>
+															<option <?= $v['id'] == $user['wilayah'] ?> data-level="<?= $v['level']?>" value="<?= $v["id"] ?>"><?= ($v['level'] == '1' ? 'Prov. ' :( $v['level'] == '3' ?  'Kec. ' : '') ).  kapitalize($v["nama"]) ?></option>
+														<?php endforeach; ?>
 													</select>
-													<?= form_error('user_role', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+													<?= form_error('wilayah', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 												</div>
-
+												<div class="form-group">
+													<label for="gudang">Gudang</label>
+													<select <?= $role == 'admin' ? 'multiple':null ?>  name="gudang[]" id="gudang" class="form-control select2 <?= form_error('gudang') ? 'is-invalid' : ''; ?>">
+													<?php if($role == 'staff'): ?>	
+														<option value="">--Pilih Gudang--</option>
+													<?php endif ?>
+														<?php foreach ($gudang as $v) : ?>
+															<option <?= in_array($v->id, $user['gudang']) ? 'selected' : null ?> data-level="<?= $v->level_wilayah?>" value="<?= $v->id ?>"><?= $v->nama . " - " . ($v->level_wilayah == '1' ? 'Prov. ' :( $v->level_wilayah == '3' ?  'Kec. ' : '') ).  kapitalize($v->wilayah_gudang) ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
 												<hr>
 												<div class="form-action">
 													<button type="submit" class="btn btn-primary btn-lg">Simpan Data</button>
 													<button type="reset" class="btn btn-warning btn-lg">Reset Form</button>
 												</div>
 											</form>
+											<?php endif ?>
 										</div>
 									</div>
 								</div>
