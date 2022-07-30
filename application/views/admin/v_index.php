@@ -75,7 +75,7 @@
                                                             </ul>
                                                         </td>
                                                         <td>
-                                                            <img style="width: 100%;" src="<?= assets_url('img/avatar/' . $item['user_avatar']) ?>" alt="">
+                                                            <img class="col-sm-12 col-md-6" style="width: 100%;" src="<?= assets_url('img/avatar/' . $item['user_avatar']) ?>" alt="">
                                                         </td>
 														<td>
 															<!-- <a href="" class="btn btn-icon btn-info"><i class="fas fa-eye"></i></a> -->
