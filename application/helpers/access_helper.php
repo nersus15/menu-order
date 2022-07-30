@@ -11,7 +11,7 @@ function must_login()
 function must_admin()
 {
 	$mustAdmin = get_instance();
-	if ($mustAdmin->session->userdata("user_role") !== "admin") {
+	if (!is_login('admin')) {
 		redirect('auth/block');		
 	}
 }

@@ -39,6 +39,8 @@ class Auth extends CI_Controller
 					"user_avatar" => $userData["user_avatar"],
 					"user_role" => $userData["user_role"],
 					"created_at" => $userData["created_at"],
+					"id_user" => $userData["id_user"],
+					"user_password" => $userData["user_password"],
 
 				];
 				$tmp = $this->db->select('w1.id as idwil, w1.nama as wilnama, w1.level as willevel')

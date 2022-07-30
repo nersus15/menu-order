@@ -106,4 +106,75 @@ class CI_Controller {
 		return self::$instance;
 	}
 
+	function add_javascript($js)
+    {
+        if (isset($js['pos'])) {
+            $this->params['extra_js'][] = $js;
+        } else {
+            foreach ($js as $j) {
+                $this->params['extra_js'][] = $j;
+            }
+        }
+    }
+    function add_cachedJavascript($js, $type = 'file', $pos="body:end", $data = array())
+    {        
+        try {
+            if($type == 'file'){
+                ob_start();
+                if (!empty($data))
+                    extract($data);
+                    
+                
+                include_once get_path(ASSET_PATH . $js . '.js');
+            }
+
+            $this->params['extra_js'][] = array(
+                'script' => $type == 'file' ? ob_get_contents() : $js,
+                'type' => 'inline',
+                'pos' => 'body:end'
+            );
+            if($type == 'file')
+                ob_end_clean();
+            
+        } catch (\Throwable $th) {
+           print_r($th);
+        }
+    }
+    function add_cachedStylesheet($css, $type = 'file', $pos = 'head', $data = array())
+    {
+        if (!empty($data)) {
+            foreach ($data as $k => $v) {
+                $this->params['var'][$k] = $v;
+            }
+        }
+        if($type == 'file'){
+            ob_start();
+            if (!empty($data))
+                extract($data);
+            try {
+                include_once get_path(ASSET_PATH . $css . '.css');
+            } catch (\Throwable $th) {
+                print_r($th);
+            }
+        }
+
+        $this->params['extra_css'][] = array(
+            'style' => $type == 'file' ? ob_get_contents() : $css,
+            'type' => 'inline',
+            'pos' => $pos
+        );
+        if($type == 'file')
+            ob_end_clean(); 
+    }
+    function add_stylesheet($css)
+    {
+        if (isset($css['pos'])) {
+            $this->params['extra_css'][] = $css;
+        } else {
+            foreach ($css as $c) {
+                $this->params['extra_css'][] = $c;
+            }
+        }
+    }
+
 }

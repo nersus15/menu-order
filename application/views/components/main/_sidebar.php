@@ -17,8 +17,8 @@
 				</li>
 				<li class="menu-header">Master Data</li>
 				<li class="<?= ($this->uri->segment(1) == 'gudang') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("gudang") ?>"><i class="fas fa-warehouse"></i> <span>Kelola Gudang</span></a></li>
-				<li class="<?= ($this->uri->segment(1) == 'admin') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("customer") ?>"><i class="fas fa-users"></i> <span>Kelola Admin </span></a></li>
-				<li class="<?= ($this->uri->segment(1) == 'staff') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("customer") ?>"><i class="fas fa-users"></i> <span>Kelola Staff</span></a></li>
+				<li class="<?= ($this->uri->segment(1) == 'admin') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("admin") ?>"><i class="fas fa-users"></i> <span>Kelola Admin </span></a></li>
+				<li class="<?= ($this->uri->segment(1) == 'staff') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("staff") ?>"><i class="fas fa-users"></i> <span>Kelola Staff</span></a></li>
 				<li class="menu-header">Laporan</li>
 				<li><a class="nav-link" href="<?= base_url("report/reporttransactions") ?>"><i class="fas fa-file"></i> <span>Rekap Transaksi</span></a></li>
 				<li><a class="nav-link" href="<?= base_url("report/stok") ?>"><i class="fas fa-file"></i> <span>Rekap Stok Barang</span></a></li>

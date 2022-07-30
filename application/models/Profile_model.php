@@ -15,7 +15,7 @@ class Profile_model extends CI_Model
 	public function updatePassword($passwordHash)
 	{
 		$this->db->set("user_password", $passwordHash);
-		$this->db->where("user_email", $this->session->userdata("user_email"));
+		$this->db->where("user_email", sessiondata('login', 'user_email'));
 		$this->db->update("users");
 	}
 }

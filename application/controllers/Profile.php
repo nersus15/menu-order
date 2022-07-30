@@ -16,6 +16,8 @@ class Profile extends CI_Controller
 	{
 		
 		$data["title"] = "Profile Saya";
+		$this->load->model('Gudang_model');
+		$data['gudang'] = $this->Gudang_model->getMyGudang();
 
 		$this->load->view('profile/v_index', $data);
 	}
@@ -36,31 +38,37 @@ class Profile extends CI_Controller
 				"user_phone" => $this->input->post("user_phone"),
 				"user_address" => $this->input->post("user_address"),
 			];
-			$this->session->set_userdata($profileData);
+			$newSessionData = sessiondata();
 			// cek jika ada gambar yang diupload
 			$uploadImage = $_FILES["user_avatar"];
 
 			if ($uploadImage) {
 				$config["allowed_types"] = "gif|jpg|png|bmp|jpeg";
-				$config["upload_path"] = "./assets/uploads/users/";
+				$config["upload_path"] = "./assets/img/avatar/";
 				$config['file_name'] = round(microtime(true) * 1000);
 				$this->load->library("upload", $config);
 				if ($this->upload->do_upload("user_avatar")) {
-					$userSession = $this->db->get_where("users", ["user_email" => $this->session->userdata("user_email")])->row_array();
+					$userSession = sessiondata();
 					$oldAvatar = $userSession["user_avatar"];
-					if ($oldAvatar != "default.jpg") {
-						unlink('./assets/uploads/users/' . $oldAvatar);
+					if ($oldAvatar != "default.png") {
+						unlink('./assets/img/avatar/' . $oldAvatar);
 					}
 					$newAvatar = $this->upload->data("file_name");
+					$newSessionData['user_avatar'] = $newAvatar;
 					$this->db->set("user_avatar", $newAvatar);
-					$this->session->set_userdata("user_avatar", $newAvatar);
 				} else {
 					echo $this->upload->display_errors();
 				}
 			}
 
+			foreach ($profileData as $key => $value) {
+				if(isset($newSessionData[$key]))
+					$newSessionData[$key] = $value;
+			}
+
 
 			$this->Profile_model->updateProfile($profileData);
+			$this->session->set_userdata('login', $newSessionData);
 			$this->session->set_flashdata('message', ['message' => 'Profile Berhasil diperbarui', 'type' => 'success']);
 			redirect("profile");
 		}
@@ -80,10 +88,10 @@ class Profile extends CI_Controller
 		if ($this->form_validation->run() == FALSE) {
 			$this->index();
 		} else {
-			$data["user_session"] = $this->db->get_where("users", ["user_email" => $this->session->userdata("user_email")])->row_array();
+			$sessiondata = sessiondata();
 			$currentPassword = $this->input->post("current_password");
 			$newPassword = $this->input->post("new_password");
-			if (password_verify($currentPassword, $data["users_session"]["user_password"])) {
+			if (!password_verify($currentPassword, $sessiondata['user_password'])) {
 				$this->session->set_flashdata('message', ['message' => 'Password kamu salah', 'type' => 'danger']);
 				redirect("profile");
 			} else {
@@ -95,8 +103,9 @@ class Profile extends CI_Controller
 					$passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
 
 					$this->Profile_model->updatePassword($passwordHash);
-
-					$this->session->set_flashdata('message', ['message' => 'Silahkan login dengan password baru', 'type' => 'success']);
+					$sessiondata['user_password'] = $passwordHash;
+					$this->session->set_userdata('login', $sessiondata);
+					$this->session->set_flashdata('message', ['message' => 'Password Berhasil Diupdate', 'type' => 'success']);
 					redirect("profile");
 				}
 			}

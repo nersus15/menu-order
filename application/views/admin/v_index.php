@@ -20,7 +20,7 @@
 				<section class="section">
 					<div class="section-header d-flex justify-content-between">
 						<h1><?= $title; ?></h1>
-						<a href="<?= base_url("gudang/create") ?>" class="btn btn-primary btn-lg">Tambah Gudang</a>
+						<a href="<?= base_url("user/create/" . sandi('admin')) ?>" class="btn btn-primary btn-lg">Tambah Admin</a>
 					</div>
 					<!-- alert flashdata -->
 					<?php
@@ -42,12 +42,12 @@
                                                     <th class="text-center">
 														No
 													</th>
-													<th>ID Gudang</th>
-													<th>Nama Gudang</th>
-													<th>Alamat Gudang</th>
-													<th>Wilayah</th>
-													<th>Admin</th>
-													<th>Staff</th>
+													<th>Nama</th>
+													<th>Wilayah Kerja</th>
+													<th>Alamat</th>
+													<th>Gudang</th>
+													<th>Wilayah Gudang</th>
+													<th>Photo</th>
 
 													<th>Aksi</th>
 												</tr>
@@ -57,29 +57,30 @@
 												<?php foreach ($items as $item) : ?>
 													<tr>
 														<td><?= $no++; ?></td>
-														<td><?= $item->id ?></td>
-														<td><?= $item->nama ?></td>
-														<td><?= $item->alamat ?></td>
-														<td><?= ($item->level_wilayah == '1' ? 'Prov. ' :( $item->level_wilayah == '3' ?  'Kec. ' : '') ) . kapitalize($item->wilayah_gudang) ?></td>
+														<td><?= $item['user_name'] ?></td>
+														<td><?= ($item['level_wilayah'] == '1' ? 'Prov. ' :( $item['level_wilayah'] == '3' ?  'Kec. ' : '') ) . kapitalize($item['nama_wilayah']) ?></td>
+                                                        <td><?= $item['user_address'] ?></td>
                                                         <td>
                                                             <ul>
-                                                                <?php foreach($item->admin as $admin): ?>
-                                                                    <li><?= $admin->user_name ?></li>
+                                                                <?php foreach($item['gudang'] as $gudang):?>
+                                                                    <li><?= $gudang['nama'] ?></li>
                                                                 <?php endforeach ?>
                                                             </ul>
                                                         </td>
                                                         <td>
                                                             <ul>
-                                                                <?php foreach($item->staff as $staff): ?>
-                                                                    <li><?= $staff->user_name ?></li>
+                                                                <?php foreach($item['gudang'] as $gudang):?>
+                                                                    <li><?= ($gudang['level_wil_gudang'] == '1' ? 'Prov. ' :( $gudang['level_wil_gudang'] == '3' ?  'Kec. ' : '') ) . kapitalize($gudang['wilayah_gudang']) ?></li>
                                                                 <?php endforeach ?>
                                                             </ul>
+                                                        </td>
+                                                        <td>
+                                                            <img class="col-sm-12 col-md-6" style="width: 100%;" src="<?= assets_url('img/avatar/' . $item['user_avatar']) ?>" alt="">
                                                         </td>
 														<td>
 															<!-- <a href="" class="btn btn-icon btn-info"><i class="fas fa-eye"></i></a> -->
-															<a data-toggle="tooltip" data-placement="bottom" title="Lihat Gudang" href="<?= base_url("gudang/detail/" . $item->id) ?>" class="btn btn-icon btn-info"><i class="fas  fa-eye"></i></a>
-															<a data-toggle="tooltip" data-placement="bottom" title="Update" href="<?= base_url("gudang/update/" . $item->id) ?>"class="btn btn-icon btn-warning"><i class="fas fa-pencil-alt"></i></a>
-															<a data-toggle="tooltip" data-placement="bottom" title="Hapus" href="<?= base_url("gudang/delete/" . $item->id) ?>" class="btn btn-icco btn-danger btn-delete"><i class="fas fa-trash"></i></a>
+															<a data-toggle="tooltip" data-placement="bottom" title="Update" href="<?= base_url("admin/update/" . $item['id_user']) ?>"class="btn btn-icon btn-info"><i class="fas fa-pencil-alt"></i></a>
+															<a data-toggle="tooltip" data-placement="bottom" title="Hapus" href="<?= base_url("admin/delete/" . $item['id_user']) ?>" class="btn btn-icco btn-danger btn-delete"><i class="fas fa-trash"></i></a>
 														</td>
 													</tr>
 												<?php endforeach; ?>

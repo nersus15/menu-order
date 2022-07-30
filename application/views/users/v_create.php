@@ -27,7 +27,10 @@
 								<div class="card-body">
 									<div class="row">
 										<div class="col-8 mx-auto">
-											<form action="<?= base_url("user/create") ?>" method="post" enctype="multipart/form-data">
+											<?php if(!isset($role) || !in_array($role, ['admin', 'staff'])): ?>
+												<h4>Ilegal Aksess</h4>
+											<?php else: ?>
+											<form action="<?= base_url("user/create/" . sandi($role)) ?>" method="post" enctype="multipart/form-data">
 												<div class="form-group">
 													<label for="user_name">Nama User</label>
 													<input type="text" class="form-control <?= form_error('user_name') ? 'is-invalid' : ''; ?>" name="user_name" id="user_name" placeholder="Nama User">
@@ -53,13 +56,25 @@
 													<input type="file" class="form-control" name="user_avatar" id="user_avatar">
 												</div>
 												<div class="form-group">
-													<label for="user_role">Hak Akses</label>
-													<select name="user_role" id="user_role" class="form-control <?= form_error('user_role') ? 'is-invalid' : ''; ?>">
-														<option value="" disabled selected>--Pilih Hak Akses--</option>
-														<option value="admin">Admin</option>
-														<option value="staff">Staff</option>
+													<label for="wilayah">Wilayah Kerja</label>
+													<select name="wilayah" id="wilayah" class="form-control select2 <?= form_error('wilayah') ? 'is-invalid' : ''; ?>">
+														<option value="" disabled selected>--Wilayah--</option>
+														<?php foreach ($wilayah as $v) : ?>
+															<option data-level="<?= $v['level']?>" value="<?= $v["id"] ?>"><?= ($v['level'] == '1' ? 'Prov. ' :( $v['level'] == '3' ?  'Kec. ' : '') ).  kapitalize($v["nama"]) ?></option>
+														<?php endforeach; ?>
 													</select>
-													<?= form_error('user_role', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+													<?= form_error('wilayah', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+												</div>
+												<div class="form-group">
+													<label for="gudang">Gudang</label>
+													<select <?= $role == 'admin' ? 'multiple':null ?>  name="gudang[]" id="gudang" class="form-control select2 <?= form_error('gudang') ? 'is-invalid' : ''; ?>">
+													<?php if($role == 'staff'): ?>	
+														<option value="" disabled selected>--Pilih Gudang--</option>
+													<?php endif ?>
+														<?php foreach ($gudang as $v) : ?>
+															<option data-level="<?= $v->level_wilayah?>" value="<?= $v->id ?>"><?= $v->nama . " - " . ($v->level_wilayah == '1' ? 'Prov. ' :( $v->level_wilayah == '3' ?  'Kec. ' : '') ).  kapitalize($v->wilayah_gudang) ?></option>
+														<?php endforeach; ?>
+													</select>
 												</div>
 												<div class="form-group">
 													<label for="user_password">Password</label>
@@ -71,13 +86,13 @@
 													<input type="password" class="form-control <?= form_error('user_password_confirm') ? 'is-invalid' : ''; ?>" name="user_password_confirm" id="user_password_confirm" placeholder="Konfirmasi Password">
 													<?= form_error('user_password_confirm', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 												</div>
-
 												<hr>
 												<div class="form-action">
 													<button type="submit" class="btn btn-primary btn-lg">Simpan Data</button>
 													<button type="reset" class="btn btn-warning btn-lg">Reset Form</button>
 												</div>
 											</form>
+											<?php endif ?>
 										</div>
 									</div>
 								</div>
