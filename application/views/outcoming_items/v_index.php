@@ -20,7 +20,7 @@
 				<section class="section">
 					<div class="section-header d-flex justify-content-between">
 						<h1><?= $title; ?></h1>
-						<a href="<?= base_url("outcomingitem/create") ?>" class="btn btn-primary btn-lg">Tambah Barang Masuk</a>
+						<a href="<?= base_url("outcomingitem/create") ?>" class="btn btn-primary btn-lg">Tambah Barang Keluar</a>
 					</div>
 					<!-- alert flashdata -->
 					<?php
@@ -47,7 +47,7 @@
 													<th>Kode Barang</th>
 													<th>Nama Barang</th>
 													<th>Jumlah Keluar</th>
-													<th>Customer</th>
+													<th>Tujuan</th>
 													<th>Aksi</th>
 												</tr>
 											</thead>
@@ -56,14 +56,14 @@
 												<?php foreach ($outcoming_items as $outcoming_item) : ?>
 													<tr>
 														<td><?= $no++; ?></td>
-														<td><?= $outcoming_item["outcoming_item_date"] ?></td>
-														<td><?= $outcoming_item["outcoming_item_code"] ?></td>
+														<td><?= $outcoming_item["transaksi_date"] ?></td>
+														<td><?= $outcoming_item["transaksi_code"] ?></td>
 														<td><?= $outcoming_item["item_code"] ?></td>
 														<td><?= $outcoming_item["item_name"] ?></td>
-														<td><?= $outcoming_item["outcoming_item_qty"] ?></td>
-														<td><?= $outcoming_item["customer_name"] ?></td>
+														<td><?= $outcoming_item["transaksi_qty"] ?></td>
+														<td><?= !empty($outcoming_item['tujuan']) && strlen($outcoming_item['tujuan']) > 8 ? $outcoming_item['tujuan'] : $outcoming_item["namagudang"] .  " - " . ($outcoming_item['lvlwil'] == '1' ? 'Prov. ' : ($outcoming_item['lvlwil'] == '3' ? 'Kec. ' : null)) . kapitalize($outcoming_item['namawil']) ?></td>
 														<td>
-															<a href="<?= base_url("outcomingitem/delete/" . $outcoming_item["id_outcoming_item"]) ?>" class="btn btn-icco btn-danger btn-delete"><i class="fas fa-trash"></i></a>
+															<a href="<?= base_url("outcomingitem/delete/" . $outcoming_item["id_transaksi"]) ?>" class="btn btn-icco btn-danger btn-delete"><i class="fas fa-trash"></i></a>
 														</td>
 													</tr>
 												<?php endforeach; ?>

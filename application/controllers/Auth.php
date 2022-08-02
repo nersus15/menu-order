@@ -63,7 +63,7 @@ class Auth extends CI_Controller
 				if(!empty($tmp))
 					$data = array_merge($data, $tmp);
 
-				$this->session->set_userdata('login', $data);
+				$this->session->set_userdata('login' . '_' . APPNAME, $data);
 				redirect('dashboard');
 			} else {
 				$this->session->set_flashdata('message', ['message' => 'Password kamu salah', 'type' => 'danger']); 

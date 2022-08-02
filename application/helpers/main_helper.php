@@ -62,6 +62,9 @@ if (!method_exists($this, 'httpmethod')) {
 if (!method_exists($this, 'sessiondata')) {
     function sessiondata($index = 'login', $kolom = null, $default = null)
     {
+        if($index == 'login' && defined('APPNAME'))
+            $index .= '_' . APPNAME;
+            
         // if (!is_login())
         //     return;
         /** @var CI_Controller $CI */
@@ -128,7 +131,7 @@ if (!method_exists($this, 'is_login')) {
     {
         /** @var CI_Controller $ci */
         $ci =& get_instance();
-        $userdata = $ci->session->userdata('login'); //sessiondata('login')
+        $userdata = sessiondata('login');
         if(!empty($callback) && is_callable($callback))
            return $callback($role, $wil, $userdata);
 

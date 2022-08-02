@@ -2,7 +2,7 @@
 class Item_model extends CI_Model
 {
 
-	public function getAllItems($filters = [])
+	public function getAllItems($filters = null)
 	{
 		$query = $this->db->select("*")
 			->from("items")
@@ -10,11 +10,14 @@ class Item_model extends CI_Model
 			->join("units", "units.id_unit = items.id_unit");
 
 		if(!empty($filters)){
-			foreach($filters as $filter){
-				if($filter['type'] == 'or')
-					$query->or_where($filter['q']);
-				else
-					$query->where($filter['q']);
+			if(!empty($filters)){
+				foreach($filters as $k => $v){
+					if(is_numeric($k)){
+						$query->where($v, null, false);
+					}else{
+						$query->where($k, $v);
+					}
+				}
 			}
 		}
 

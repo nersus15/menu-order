@@ -59,7 +59,7 @@ class User_model extends CI_Model
 	function getby($where = null){
 
 	}
-	function userhirarkiby($where = null, $loadGudang = false){
+	function userhirarkiby($where = null, $loadGudang = false, $reverse = false){
 		$level = sessiondata('login', 'willevel');
 		$wil = sessiondata('login', 'idwil');
 		$q = $this->db->select('users.*, wilayah.nama as nama_wilayah, wilayah.level as level_wilayah');
@@ -73,10 +73,19 @@ class User_model extends CI_Model
 			}
 		}
 		$q->join('wilayah', 'wilayah.id = users.wilayah');
-		if($level == 2)
-			$q->like('wilayah', substr($wil, 0, 5), 'after');
-		else if($level == 3)
-			$q->where('wilayah', $wil);
+		if(!$reverse){
+            if($level == 2)
+                $q->like('wilayah', substr($wil, 0, 5), 'after');
+            else if($level == 3)
+                $q->where('wilayah', $wil);
+
+        }else{
+            if($level == 2)
+                $q->where('wilayah', substr($wil, 0, 2) . '.00.00.0000', 'after');
+            else if($level == 3)
+                $q->where('wilayah', substr($wil, 0, 5) . '.00.0000');
+        }
+
 		$data = $q->get('users')->result_array();
 		if($loadGudang){
 			foreach($data as $k => $v){
@@ -100,16 +109,24 @@ class User_model extends CI_Model
 
 		return $data;
 	}
-	function gethirarkiWilayah($where = null){
+	function gethirarkiWilayah($where = null, $reverse = false){
 		$level = sessiondata('login', 'willevel');
 		$wil = sessiondata('login', 'idwil');
 		$q = $this->db->select('id, nama, level')
 			->where('level <', 4, null);
 
-		if($level == 2)
-			$q->like('id', substr($wil, 0, 5), 'after');
-		else if($level == 3)
-			$q->where('id', $wil);
+		if(!$reverse){
+			if($level == 2)
+				$q->like('id', substr($wil, 0, 5), 'after');
+			else if($level == 3)
+				$q->where('id', $wil);
+
+		}else{
+			if($level == 2)
+				$q->where('id', substr($wil, 0, 2) . '.00.00.0000', 'after');
+			else if($level == 3)
+				$q->where('id', substr($wil, 0, 5) . '.00.0000');
+		}
 			
 		if(!empty($where)){
 			foreach($where as $k => $v){

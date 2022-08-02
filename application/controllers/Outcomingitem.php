@@ -25,14 +25,20 @@ class Outcomingitem extends CI_Controller
 
 	public function create()
 	{
+		$this->load->model('Gudang_model');
+		$gudang = $this->Gudang_model->getMyGudang();
 		$data = [
 			"title" => "Tambah Data Barang Keluar",
 			"outcoming_item_code" => $this->Outcomingitem_model->makeOutcomingItemCode(),
-			"items" => $this->Item_model->getAllItems(),
-			"customers" => $this->Customer_model->getAllCustomers()
+			"items" => $this->Item_model->getAllItems(['items.gudang' => $gudang[0]['id']]),
+			"gudang" => $this->Gudang_model->hirarkiby(null)
 		];
+		if($this->input->post('jenis_tujuan') == 'toko'){
+			$this->form_validation->set_rules('toko', 'Toko Tujuan', 'required');
+		}else{
+			$this->form_validation->set_rules('tujuan', 'Gudang Tujuan', 'required');
 
-		$this->form_validation->set_rules('id_customer', 'Customer', 'required');
+		}
 		$this->form_validation->set_rules('id_items', 'Barang', 'required');
 		$this->form_validation->set_rules('outcoming_item_qty', 'Jumlah Barang Keluar', 'required');
 		if ($this->form_validation->run() == FALSE) {
@@ -40,11 +46,15 @@ class Outcomingitem extends CI_Controller
 		} else {
 			$outcomingItemData = [
 				"id_items" => $this->input->post("id_items"),
-				"id_customer" => $this->input->post("id_customer"),
-				"outcoming_item_code" => $this->input->post("outcoming_item_code"),
-				"outcoming_item_qty" => $this->input->post("outcoming_item_qty")
+				"transaksi_code" => $this->input->post("outcoming_item_code"),
+				"transaksi_qty" => $this->input->post("outcoming_item_qty"),
+				'jenis' => 'keluar',
+				'gudang' => $gudang[0]['id'],
+				'pencatat' => sessiondata('login', 'id_user'),
+				'tujuan' => $this->input->post('jenis_tujuan') == 'toko' ?  $this->input->post('toko') : $this->input->post('tujuan')
 			];
 			$this->Outcomingitem_model->insertNewOutcomingItem($outcomingItemData);
+			$this->db->where('id_item', $outcomingItemData['id_items'])->update('items', ['item_stock' => $this->input->post('item_stock_total')]);
 			$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
 			redirect('outcomingitem');
 		}

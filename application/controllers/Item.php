@@ -42,7 +42,9 @@ class Item extends CI_Controller
 		if ($this->form_validation->run() == FALSE) {
 			$this->load->view("items/v_create", $data);
 		} else {
-			$itemImage = "default.png";
+			$this->load->model('Gudang_model');
+			$gudang = $this->Gudang_model->getMyGudang();
+			$itemImage = "default.jpg";
 			if (!empty($_FILES["item_image"]['tmp_name'])) {
 				$config = [
 					"allowed_types" => "jpg|jpeg|png|bmp|gif",
@@ -65,7 +67,8 @@ class Item extends CI_Controller
 				"item_image" => $itemImage,
 				"item_stock" => $this->input->post("item_stock"),
 				"item_price" => $this->input->post("item_price"),
-				"item_description" => $this->input->post("item_description")
+				"item_description" => $this->input->post("item_description"),
+				'gudang' => $gudang[0]['id']
 			];
 
 			$this->Item_model->insertNewItem($itemData);

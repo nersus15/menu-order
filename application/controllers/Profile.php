@@ -68,7 +68,7 @@ class Profile extends CI_Controller
 
 
 			$this->Profile_model->updateProfile($profileData);
-			$this->session->set_userdata('login', $newSessionData);
+			$this->session->set_userdata('login' . '_' . APPNAME, $newSessionData);
 			$this->session->set_flashdata('message', ['message' => 'Profile Berhasil diperbarui', 'type' => 'success']);
 			redirect("profile");
 		}
@@ -104,7 +104,7 @@ class Profile extends CI_Controller
 
 					$this->Profile_model->updatePassword($passwordHash);
 					$sessiondata['user_password'] = $passwordHash;
-					$this->session->set_userdata('login', $sessiondata);
+					$this->session->set_userdata('login' . '_' . APPNAME, $sessiondata);
 					$this->session->set_flashdata('message', ['message' => 'Password Berhasil Diupdate', 'type' => 'success']);
 					redirect("profile");
 				}

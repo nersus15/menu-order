@@ -48,7 +48,7 @@
 													<th>Kode Barang</th>
 													<th>Nama Barang</th>
 													<th>Jumlah Masuk</th>
-													<th>Supplier</th>
+													<th>Asal</th>
 													<th>Aksi</th>
 												</tr>
 											</thead>
@@ -57,14 +57,14 @@
 												<?php foreach ($incoming_items as $incoming_item) : ?>
 													<tr>
 														<td><?= $no++; ?></td>
-														<td><?= $incoming_item["incoming_item_date"] ?></td>
-														<td><?= $incoming_item["incoming_item_code"] ?></td>
+														<td><?= $incoming_item["transaksi_date"] ?></td>
+														<td><?= $incoming_item["transaksi_code"] ?></td>
 														<td><?= $incoming_item["item_code"] ?></td>
 														<td><?= $incoming_item["item_name"] ?></td>
-														<td><?= $incoming_item["incoming_item_qty"] ?></td>
-														<td><?= $incoming_item["supplier_name"] ?></td>
+														<td><?= $incoming_item["transaksi_qty"] ?></td>
+														<td><?= $incoming_item["namagudang"] .  " - " . ($incoming_item['lvlwil'] == '1' ? 'Prov. ' : ($incoming_item['lvlwil'] == '3' ? 'Kec. ' : null)) . kapitalize($incoming_item['namawil']) ?></td>
 														<td>
-															<a href="<?= base_url("incomingitem/delete/" . $incoming_item["id_incoming_items"]) ?>" class="btn btn-icco btn-danger btn-delete"><i class="fas fa-trash"></i></a>
+															<a href="<?= base_url("incomingitem/delete/" . $incoming_item["id_transaksi"]) ?>" class="btn btn-icco btn-danger btn-delete"><i class="fas fa-trash"></i></a>
 														</td>
 													</tr>
 												<?php endforeach; ?>

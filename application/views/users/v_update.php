@@ -36,7 +36,7 @@
 													<select name="wilayah" id="wilayah" class="form-control select2 <?= form_error('wilayah') ? 'is-invalid' : ''; ?>">
 														<option value="" disabled>--Wilayah--</option>
 														<?php foreach ($wilayah as $v) : ?>
-															<option <?= $v['id'] == $user['wilayah'] ?> data-level="<?= $v['level']?>" value="<?= $v["id"] ?>"><?= ($v['level'] == '1' ? 'Prov. ' :( $v['level'] == '3' ?  'Kec. ' : '') ).  kapitalize($v["nama"]) ?></option>
+															<option <?= $v['id'] == $user['wilayah'] ? 'selected' : null ?> data-level="<?= $v['level']?>" value="<?= $v["id"] ?>"><?= ($v['level'] == '1' ? 'Prov. ' :( $v['level'] == '3' ?  'Kec. ' : '') ).  kapitalize($v["nama"]) ?></option>
 														<?php endforeach; ?>
 													</select>
 													<?= form_error('wilayah', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>

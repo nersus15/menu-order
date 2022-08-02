@@ -106,7 +106,6 @@ class User extends CI_Controller
 			'gudang' => $this->Gudang_model->getbyuser(),
 			'wilayah' => $this->User_model->gethirarkiWilayah(),
 		];
-
 		$this->form_validation->set_rules('wilayah', 'Wilayah Kerja', 'required');
 		if ($this->form_validation->run() == FALSE) {
 			$this->load->view("users/v_update", $data);

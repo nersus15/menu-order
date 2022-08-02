@@ -33,14 +33,14 @@
 													<input type="text" class="form-control" name="incoming_item_code" id="incoming_item_code" placeholder="Kode Barang" value="<?= $incoming_item_code ?>" readonly>
 												</div>
 												<div class="form-group">
-													<label for="id_supplier">Supplier</label>
-													<select name="id_supplier" id="id_supplier" class="form-control select2">
-														<option value="" disabled selected>--Pilih Supplier--</option>
-														<?php foreach ($suppliers as $supplier) : ?>
-															<option value="<?= $supplier["id_supplier"] ?>"><?= $supplier["supplier_code"] ?> | <?= $supplier["supplier_name"] ?></option>
+													<label for="gudang_asal">Gudang Asal</label>
+													<select name="gudang_asal" id="gudang_asal" class="form-control select2">
+														<option value="" disabled selected>--Pilih Gudang--</option>
+														<?php foreach ($gudang as $v) : ?>
+															<option data-level="<?= $v['level_wilayah']?>" value="<?= $v['id'] ?>"><?= $v['nama'] . " - " . ($v['level_wilayah'] == '1' ? 'Prov. ' :( $v['level_wilayah'] == '3' ?  'Kec. ' : '') ).  kapitalize($v['wilayah_gudang']) ?></option>
 														<?php endforeach; ?>
 													</select>
-													<?= form_error('id_supplier', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+													<?= form_error('gudang_asal', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 												</div>
 												<div class="form-group">
 													<label for="id_items">Barang</label>

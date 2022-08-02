@@ -64,6 +64,46 @@ class Gudang_model extends CI_Model
         }
         return $gudang;
     }
+    function getBy($where = null){
+        $q = $this->db->select('gudang.*, wilayah.level as level_wilayah_gudang, wilayah.nama as nama_wilayah_gudang')
+            ->join('wilayah', 'wilayah.id = gudang.wilayah');
+        if(!empty($where)){
+            foreach($where as $k => $v){
+				if(is_numeric($k)){
+					$q->where($v, null, false);
+				}else{
+					$q->where($k, $v);
+				}
+			}
+        }
+        $staff = [];
+        $admin = [];
+        $items = [];
+        $gudang = $q->get('gudang')->result_array();
+        $tmp = $gudang;
+        foreach($gudang as $k => $v){
+            $staff = $this->db->select('users.*, wilayah.nama as wilayah_kerja_staff, wilayah.level as level_wilayah_staff')
+                ->where('gudang', $v['id'])
+                ->join('wilayah', 'wilayah.id = users.wilayah')
+                ->get('users')->result_array();
+            $admin = $this->db->select('users.*, wilayah.nama as wilayah_kerja_admin, wilayah.level as level_wilayah_admin')
+                 ->where('admin_gudang.gudang', $v['id'])
+                 ->join('admin_gudang', 'admin_gudang.admin = users.id_user')
+                 ->join('wilayah', 'wilayah.id = users.wilayah')
+                 ->get('users')->result_array();
+            $items = $this->db->select('*')
+                ->where('items.gudang', $v['id'])
+                ->join('categories', 'categories.id_category = items.id_category')
+                ->join('units', 'units.id_unit = items.id_unit')
+                ->get('items')->result_array();
+            $tmp[$k]['staff'] = $staff;
+            $tmp[$k]['admin'] = $admin;
+            $tmp[$k]['items'] = $items;
+        }
+        
+        
+        return $tmp;
+    }
     function create($data){
         try {
             $this->db->insert('gudang', $data);
@@ -106,5 +146,54 @@ class Gudang_model extends CI_Model
             if(!empty($redirect))
                 redirect($redirect);
         }
+    }
+    function hirarkiby($where = null, $reverse = false){
+		$level = sessiondata('login', 'willevel');
+		$wil = sessiondata('login', 'idwil');
+		$q = $this->db->select('gudang.*, wilayah.nama as wilayah_gudang, wilayah.level as level_wilayah');
+		if(!empty($where)){
+			foreach($where as $k => $v){
+				if(is_numeric($k)){
+					$q->where($v, null, false);
+				}else{
+					$q->where($k, $v);
+				}
+			}
+		}
+		$q->join('wilayah', 'wilayah.id = gudang.wilayah');
+        if(!$reverse){
+            if($level == 2)
+                $q->like('wilayah', substr($wil, 0, 5), 'after');
+            else if($level == 3)
+                $q->where('wilayah', $wil);
+
+        }else{
+            if($level == 2)
+                $q->where('wilayah', substr($wil, 0, 2) . '.00.00.0000', 'after');
+            else if($level == 3)
+                $q->where('wilayah', substr($wil, 0, 5) . '.00.0000');
+        }
+		$data = $q->get('gudang')->result_array();
+		
+
+		return $data;
+	}
+
+    function getTransaksi($gudang = null){
+        $query = $this->db->select("items.*, users.user_name as nama_pencatat, transaksi.*, gudang_tujuan.nama as namagudang_tujuan, wilayah_tujuan.nama namawil_tujuan, wilayah_tujuan.level as lvlwil_tujuan, gudang_asal.nama as namagudang_asal, wilayah_asal.nama namawil_asal, wilayah_asal.level as lvlwil_asal")
+			->from("transaksi")
+			->join("users", "users.id_user = transaksi.pencatat")
+			->join("items", "items.id_item = transaksi.id_items")
+			->join("gudang as gudang_tujuan", "gudang_tujuan.id = transaksi.tujuan", 'left')
+			->join("wilayah as wilayah_tujuan", "wilayah_tujuan.id = gudang_tujuan.wilayah",'left')
+			->join("gudang as gudang_asal", "gudang_asal.id = transaksi.gudang", 'left')
+			->join("wilayah as wilayah_asal", "wilayah_asal.id = gudang_asal.wilayah",'left')
+            ->order_by('id_transaksi')
+            ->select('penghapus.user_name as nama_penghapus')
+            ->join('users penghapus', 'penghapus.id_user = transaksi.penghapus', 'left');
+		if(!empty($gudang)){
+			$query->where_in('transaksi.gudang', $gudang);
+		}
+		return $query->get()->result_array();
     }
 }

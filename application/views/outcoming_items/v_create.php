@@ -33,14 +33,32 @@
 													<input type="text" class="form-control" name="outcoming_item_code" id="outcoming_item_code" placeholder="Kode Transaksi" value="<?= $outcoming_item_code ?>" readonly>
 												</div>
 												<div class="form-group">
-													<label for="id_customer">Customer</label>
-													<select name="id_customer" id="id_customer" class="form-control select2">
-														<option value="" disabled selected>--Pilih Customer--</option>
-														<?php foreach ($customers as $customer) : ?>
-															<option value="<?= $customer["id_customer"] ?>"><?= $customer["customer_code"] ?> | <?= $customer["customer_name"] ?></option>
+													<label for="jenis-tujuan">Jenis Tujuan</label>
+													<div class="row">
+														<div class="col-sm-6 col-md-2 form-group">
+															<input type="radio" name="jenis_tujuan" id="jenis-tujuan-gudang" value="gudang" <?= form_error('tujuan') ? 'checked' : '' ?>>
+															<label for="jenis-tujuan-gudang">Gudang</label>
+														</div>
+														<div class="col-sm-6 col-md-2 form-group">
+															<input type="radio" name="jenis_tujuan" id="jenis-tujuan-toko" value="toko" <?= form_error('toko') ? 'checked' : '' ?>>
+															<label for="jenis-tujuan-toko">Toko</label>
+														</div>
+													</div>
+												</div>
+												<div class="form-group" id="region-tujuan-gudang">
+													<label for="tujuan">Gudang Tujuan</label>
+													<select name="tujuan" id="tujuan" class="form-control select2  <?= form_error('tujuan') ? 'is-invalid' : '' ?>">
+														<option value="" disabled selected>--Pilih Gudang--</option>
+														<?php foreach ($gudang as $v) : ?>
+															<option data-level="<?= $v['level_wilayah']?>" value="<?= $v['id'] ?>"><?= $v['nama'] . " - " . ($v['level_wilayah'] == '1' ? 'Prov. ' :( $v['level_wilayah'] == '3' ?  'Kec. ' : '') ).  kapitalize($v['wilayah_gudang']) ?></option>
 														<?php endforeach; ?>
 													</select>
-													<?= form_error('id_customer', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+													<?= form_error('tujuan', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+												</div>
+												<div class="form-group" style="display: none;" id="region-tujuan-toko">
+													<label for="toko">Toko Tujuan</label>
+													<input name="toko" id="toko" class="form-control <?= form_error('toko') ? 'is-invalid' : '' ?>" />
+													<?= form_error('toko', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 												</div>
 												<div class="form-group">
 													<label for="id_items">Barang</label>
@@ -158,7 +176,17 @@
 				}
 				$('#ItemStockTotal').val(parseInt(total) - parseInt(value));
 			});
-
+			$("input[name='jenis_tujuan']").change(function(){
+				var val = $(this).val();
+				if(val == 'toko'){
+					$("#region-tujuan-toko").show();
+					$("#region-tujuan-gudang").hide();
+				}else if(val == 'gudang'){
+					$("#region-tujuan-toko").hide();
+					$("#region-tujuan-gudang").show();
+				}
+			});
+			$("input[name='jenis_tujuan']:checked").trigger('change');
 		});
 	</script>
 

@@ -82,6 +82,14 @@ class Gudang extends CI_Controller
 	}
 
 	function detail($gudang){
-		
+		$idgudang = [$gudang];
+		$data = [
+            "title" => "Kelola Gudang Se " . kapitalize(sessiondata('login', 'wilnama')),
+			"transaksi" => $this->Gudang_model->getTransaksi($idgudang),
+			'gudang' => $this->Gudang_model->getBy(['gudang.id' => $gudang]),
+			'flash_data' => $this->session->flashdata('message')
+		];
+
+		$this->load->view("gudang/detail", $data);
 	}
 }

@@ -60,10 +60,13 @@ class Category extends CI_Controller
 	public function ajaxAdd()
 	{
 		$this->_validateForm();
+		$this->load->model('Gudang_model');
+		$gudang = $this->Gudang_model->getMyGudang();
 		$data = array(
 			// "category_code" => $this->input->post("category_code"),
 			"category_name" => $this->input->post("category_name"),
-			"category_description" => $this->input->post("category_description")
+			"category_description" => $this->input->post("category_description"),
+			'gudang' => $gudang[0]['id']
 		);
 		$this->Category_model->save($data);
 		echo json_encode(array("status" => TRUE));
