@@ -142,4 +142,8 @@ class User extends CI_Controller
 		$this->session->set_flashdata('message',  ['message' => 'Dihapus', 'type' => 'success']);
 		redirect('user');
 	}
+
+	function baca_notif($nid){
+        $this->notification->baca($nid);
+	}
 }

@@ -1,5 +1,4 @@
 <!-- General JS Scripts -->
-<script src="<?= base_url("assets/modules/jquery.min.js"); ?>"></script>
 <script src="<?= base_url("assets/modules/popper.js") ?>"></script>
 <script src="<?= base_url("assets/modules/tooltip.js"); ?>"></script>
 <script src="<?= base_url("assets/modules/bootstrap/js/bootstrap.min.js"); ?>"></script>
@@ -75,7 +74,94 @@
 			}
 		})
 
-	})
+	});
+    var notifBtn = $("#notificationButton");
+	async function renderNotifikasi(){
+		var notifItem = "";
+        var notif = await $.get(path + 'ws/get_notif').then(res => toArray(res));
+		console.log(notif);
+		notif.forEach((n, i) => {
+			var link = n.link && n.link != '#' ? path + n.link : '#';
+			if(i == 15){
+				notifItem += '<div style="width: 100%; background: whitesmoke; justify-content: center" class="d-flex flex-row mt-3">' +
+							'<div style="cursor: pointer" id="read-all" class="pl-3 pr-2">' +
+								'<span style="" class="">Baca Semua</span>'
+							'</div>' +
+						'</div>';
+			}else if(i < 15){
+				if(!n.dibaca){
+					notifItem += '<div class="d-flex flex-row mb-3 pb-3 border-bottom">' +
+							'<div class="pl-3 pr-2">' +
+								'<b><a class="nitem" data-id="'+n.id+'" href="'+ link +'">' +
+									'<p class="font-weight-medium mb-1">'+ n.pesan +'</p>' +
+									'<p class="text-muted mb-0 text-small">'+ n.dibuat +'</p>' +
+								'</a></b>' +
+							'</div>' +
+						'</div>';
+						
+				}else{
+					notifItem += '<div class="d-flex flex-row mb-3 pb-3 border-bottom">' +
+							'<div class="pl-3 pr-2">' +
+								'<a style="color: black" class="text-primary nitem" data-id="'+ n.id +'" href="'+ link +'">' +
+									'<p class="font-weight-medium mb-1">'+ n.pesan +'</p>' +
+									'<p class="text-muted mb-0 text-small">'+ n.dibuat +'</p>' +
+								'</a>' +
+							'</div>' +
+						'</div>';
+				}
+			}
+			
+		});
+		
+		var unreadNotif = notif.filter(n =>!n.dibaca);
+		$(notifBtn).find('span.count').text(unreadNotif.length);
+		$("#notifications").empty();
+		$("#notifications").append(notifItem);
+		$("#notifications").find('#read-all').click(function(e){
+			if(unreadNotif.length == 0) return;
+			var ids = unreadNotif.map(n => n.id);
+			$.post(path + 'ws/baca_notif/all', {ids: ids}).then(res => {
+					notif.forEach((n, i) => {
+						if(ids.includes(n.id));
+							notif[i].dibaca = res.dibaca;
+					});
+				});
+		});
+		$("#notifications").find('a.nitem').click(function(e){
+			e.preventDefault();
+			var link = $(this).attr('href');
+			var nid = $(this).data('id');
+			var notifItem = notif.filter(n => n.id == nid);
+			if(notifItem.length > 0)
+				notifItem = notifItem[0];
+				
+			if(!notifItem.dibaca){
+				$.post(path + 'ws/baca_notif/' + nid).then(res => {
+					notif.forEach((n, i) => {
+						if(n.id == nid)
+							notif[i].dibaca = res.dibaca;
+					});
+					renderNotifikasi();
+				});
+			}
+			
+			if(link != '#')
+				window.location.href = link;
+			else{
+				notifikasi(notifItem.pesan, {saatTutup: function(){
+					renderNotifikasi();
+				}});
+			}
+
+		});
+	};
+
+	$(document).ready(function(){
+		if(notifBtn.length > 0){
+            renderNotifikasi();
+            setInterval(renderNotifikasi, 10000);
+        }
+	});
 </script>
 <?php
 	if(isset($this->params))

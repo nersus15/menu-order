@@ -23,7 +23,9 @@
 	<!-- Template CSS -->
 	<link rel="stylesheet" href="<?= base_url("assets/css/style.css") ?>">
 	<link rel="stylesheet" href="<?= base_url("assets/css/components.css") ?>">
-	<!-- <script src="<?= base_url("assets/modules/jquery.min.js"); ?>"></script> -->
+	<script src="<?= base_url("assets/modules/jquery.min.js"); ?>"></script>
+	<script src="<?= base_url("assets/js/kamscore/js/Kamscore.js"); ?>"></script>
+	<script src="<?= base_url("assets/js/kamscore/js/uihelper.js"); ?>"></script>
 
 	<?php 
 		if(isset($this->params))
@@ -61,6 +63,9 @@
 			}
 		}
 	?>
+	<script>
+		var path = "<?=  base_url() ?>";
+	</script>
 </head>
 
 

@@ -14,6 +14,14 @@
 		</div>
 	</form>
 	<ul class="navbar-nav navbar-right">
+		<li id="notificationButton" class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+				<i class="fas fa-bell"></i>
+				<span class="count"></span>
+			</a>
+			<div id="notifications" style="height: 300px; overflow-y: scroll;" class="dropdown-menu dropdown-menu-right">
+				
+			</div>
+		</li>
 		<li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
 				<img style="height: 30px;" alt="image" src="<?= base_url("assets/img/avatar/" . $userdata['user_avatar']) ?>" class="rounded-circle mr-1">
 				<div class="d-sm-none d-lg-inline-block">Hi, <?= $userdata['user_name']; ?></div>
