@@ -65,8 +65,8 @@
 														<td><?= $outcoming_item["transaksi_qty"] ?></td>
 														<td><?= !empty($outcoming_item['tujuan']) && strlen($outcoming_item['tujuan']) > 8 ? kapitalize($outcoming_item['tujuan']) : $outcoming_item["namagudang"] .  " - " . ($outcoming_item['lvlwil'] == '1' ? 'Prov. ' : ($outcoming_item['lvlwil'] == '3' ? 'Kec. ' : null)) . kapitalize($outcoming_item['namawil']) ?></td>
 														<td>
-															<?php if(!empty($incoming_item['nota'])): ?>
-																<a href="<?= ASSET_PATH . 'nota/' . $incoming_item['nota'] ?>" target="_blank">Lihat Nota</a>
+															<?php if(!empty($outcoming_item['nota'])): ?>
+																<a href="<?= base_url('assets/nota/' . $outcoming_item['nota'] )?>" target="_blank">Lihat Nota</a>
 															<?php endif?>
 														</td>
 														<td>
