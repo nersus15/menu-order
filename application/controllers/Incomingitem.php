@@ -59,6 +59,9 @@ class Incomingitem extends CI_Controller
 	function confirm($transaksiCode){
 		$this->load->model('Outcomingitem_model');
 		$transaksi = $this->Outcomingitem_model->getAllIncomingItemBy(['transaksi_code' => strtoupper($transaksiCode)]);
+		if(empty($transaksi)){
+			show_error("Request anda Invalid", 403, 'Transaksi Tidak ditemukan');
+		}
 		$data = [
 			"title" => "Tindak lanjuti kiriman barang",
 			"incoming_items" => $transaksi,
