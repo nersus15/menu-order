@@ -49,25 +49,7 @@
                     <h5 class="col-12 mb-5" style="text-align: center">No Data</h5>
                 <?php endif ?>
             </div>
-            <h4>Jenis Barang</h4>
-            <div>
-                <?php if (!empty($gudang['items'])) : ?>
-                    <ol class="row">
-                        <?php foreach ($gudang['items'] as $items) : ?>
-                            <li class="col-sm-12 col-md-6 mt-3">
-                                <p class="m-0">Kode Barang: <b><?= kapitalize($items['item_code']) ?></b></p>
-                                <p class="m-0">Nama Barang: <b><?= kapitalize($items['item_name']) ?></b></p>
-                                <p class="m-0">Deskripsi Barang: <b><?= kapitalize($items['item_description']) ?></b></p>
-                                <p class="m-0">Kategori Barang: <b><?= kapitalize($items['category_name']) ?></b></p>
-                                <p class="m-0">Stok Barang: <b><?= kapitalize($items['item_stock'] . ' ' . $items['unit_name']) ?></b></p>
-                                <p class="m-0">Harga Barang: <b><?= rupiah_format($items['item_price']) . ' / ' . kapitalize($items['unit_name']) ?></b></p>
-                            </li>
-                        <?php endforeach ?>
-                    </ol>
-                <?php else : ?>
-                    <h5 class="col-12 mb-5" style="text-align: center">No Data</h5>
-                <?php endif ?>
-            </div>
+
         </div>
     </div>
 </div>

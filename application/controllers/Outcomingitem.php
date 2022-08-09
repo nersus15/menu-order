@@ -62,8 +62,21 @@ class Outcomingitem extends CI_Controller
 				];
 				$this->Outcomingitem_model->insertNewOutcomingItem($outcomingItemData);
 				
-				if($post['jenis_tujuan'] == 'toko')
+				if($post['jenis_tujuan'] == 'toko'){
 					$this->db->where('barang', $outcomingItemData['id_items'])->where('gudang', $outcomingItemData['gudang'])->update('barang_gudang', ['item_stock' => $post['item_stock_total'][$key]]);
+
+					if($post['item_stock_total'][$key] < 50){
+						$barang = $this->db->select("*")->where('id_item', $outcomingItemData['id_items'])->get('items')->row();
+						// Buat Notif minta barang kepada semua gudang
+						$this->db->insert('notifikasi', [
+							'pesan' =>(strpos(strtolower(sessiondata('login', 'gudang')['0' ]['nama']), 'gudang') === false ?  'Gudang ' . sessiondata('login', 'gudang')['0' ]['nama'] : sessiondata('login', 'gudang')['0' ]['nama']) . " Kekurangan Stok untuk barang <b>" . $barang['item_name'] . "</b>",
+							'id' => random(8),
+							'jenis' => 'global',
+							'role' => 'staff',
+							'link' => 'outcomingitem/create'
+						]);
+					}
+				}
 			}
 			$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
 
@@ -72,7 +85,8 @@ class Outcomingitem extends CI_Controller
 
 				$staffGudang = $this->db->where('gudang', $post['tujuan'])->select('id_user')->get('users')->result();
 				$gudangUser = sessiondata('login', 'gudang');
-				$pesan = "Gudang " . sessiondata('login', 'gudang')[0]['nama'] . ' - ' . $gudangUser[0]['wilayah_gudang'] . " Mengirimi anda barang sebagai berikut <ol>";
+				$pesan = strpos(strtolower(sessiondata('login', 'gudang')[0]['nama']), 'gudang') === false ? 'Gudang ' : null;
+				$pesan .= sessiondata('login', 'gudang')[0]['nama'] . ' - ' . $gudangUser[0]['wilayah_gudang'] . " Mengirimi anda barang sebagai berikut <ol>";
 				foreach ($post['id_items'] as $key => $value) {
 					$namaBarang = $this->db->where('id_item', $value)
 						->join('units', 'units.id_unit = items.id_unit')

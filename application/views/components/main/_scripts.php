@@ -38,6 +38,10 @@
 <script>
 	var flashData = null;
 	var type = undefined;
+	var userinfo = {
+		id: <?= sessiondata('login', 'id_user') ?>,
+		nama: "<?= sessiondata('login', 'user_name') ?>",
+	}
 
 	if($('.flash-data').length > 0)
 		flashData = $('.flash-data').data('flashdata');
@@ -82,6 +86,7 @@
 		console.log(notif);
 		notif.forEach((n, i) => {
 			var link = n.link && n.link != '#' ? path + n.link : '#';
+			if(n.pembuat == userinfo.id) return;
 			if(i == 15){
 				notifItem += '<div style="width: 100%; background: whitesmoke; justify-content: center" class="d-flex flex-row mt-3">' +
 							'<div style="cursor: pointer" id="read-all" class="pl-3 pr-2">' +
@@ -113,7 +118,7 @@
 			
 		});
 		
-		var unreadNotif = notif.filter(n =>!n.dibaca);
+		var unreadNotif = notif.filter(n =>!n.dibaca && n.pembuat != userinfo.id);
 		$(notifBtn).find('span.count').text(unreadNotif.length);
 		$("#notifications").empty();
 		$("#notifications").append(notifItem);

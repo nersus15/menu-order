@@ -80,12 +80,12 @@ class Incomingitem extends CI_Controller
 
 	function act($act, $id){
 		$post = $this->input->post();
+		$transaksi = $this->db->where('id_transaksi', $id)->get('transaksi')->row();
 		$barang = $this->db->select('barang_gudang.*, items.item_name, items.item_code, items.item_price')
 			->join('items', 'items.id_item = barang_gudang.barang')
-			->where('gudang', $post['pengirim'])
-			->where('barang', $post['barang'])
+			->where('gudang', $transaksi->gudang)
+			->where('barang', $transaksi->id_items)
 			->get('barang_gudang')->row_array();
-		$transaksi = $this->db->where('id_transaksi', $id)->get('transaksi')->row();
 		$transaksiCode = $this->IncomingItem_model->makeIncomingItemCode();
 		
 		$pengirim = $this->db->where('id_user', $transaksi->pencatat)->select('users.*, gudang.nama as nama_gudang')
@@ -130,6 +130,7 @@ class Incomingitem extends CI_Controller
 		];
 		$this->db->where('id_transaksi', $id)->update('transaksi', ['nota' => $nota, 'verified' => $act == 'confirm' ? 1 : 2]);
 		$staffGudang = $this->db->where('gudang', $transaksi->gudang)->select('id_user')->get('users')->result();
+		// $sisa = 
 		if($act == 'confirm'){
 			$newTransaksi["incoming_item_qty"] = $transaksi->transaksi_qty;
 			$newTransaksi["verified"] = 1;
@@ -144,11 +145,21 @@ class Incomingitem extends CI_Controller
 					'id' => random(8),
 					'jenis' => 'personal',
 					'user' => $usr->id_user,
-					'pesan' => "Status transaksi dengan kode <b>" . $transaksi->transaksi_code . '<b> telah dirubah menjadi <b>Pending<b> dengan keterangan sebagai berikut <br> <p>' . $post['keterangan'] . '</p>',
+					'pesan' => "Status transaksi dengan kode <b>" . $transaksi->transaksi_code . '<b> telah dirubah menjadi <b>Confirm<b>',
 					'link' => 'outcomingitem'
 				));
 			}
-
+			// Kirim notif minta barang
+			if(($barang['item_stock'] - $transaksi->transaksi_qty) < 50){
+				$gudang = $this->db->select("*")->where('id', $transaksi->gudang)->get('gudang')->row_array();
+				$this->db->insert('notifikasi', [
+					'pesan' =>(strpos(strtolower($gudang['nama']), 'gudang') === false ?  'Gudang ' . $gudang['nama'] : sessiondata('login', 'gudang')['0' ]['nama']) . " Kekurangan Stok untuk barang <b>" . $barang['item_name'] . "</b>",
+					'id' => random(8),
+					'jenis' => 'global',
+					'role' => 'staff',
+					'link' => 'outcomingitem/create'
+				]);
+			}
 
 		}elseif($act == 'pending'){
 			$newTransaksi["incoming_item_qty"] = $post['diterima'];
@@ -170,7 +181,20 @@ class Incomingitem extends CI_Controller
 				));
 			}
 
+
+			// Kirim notif minta barang
+			if(($barang['item_stock'] - $post['diterima']) < 50){
+				$gudang = $this->db->select("*")->where('id', $transaksi->gudang)->get('gudang')->row_array();
+				$this->db->insert('notifikasi', [
+					'pesan' =>(strpos(strtolower($gudang['nama']), 'gudang') === false ?  'Gudang ' . $gudang['nama'] : sessiondata('login', 'gudang')['0' ]['nama']) . " Kekurangan Stok untuk barang <b>" . $barang['item_name'] . "</b>",
+					'id' => random(8),
+					'jenis' => 'global',
+					'role' => 'staff',
+					'link' => 'outcomingitem/create'
+				]);
+			}
 		}
+
 		$this->IncomingItem_model->insertNewIncomingItem($newTransaksi);
 		$barangAdadigudang = $this->db
 			->where('gudang', sessiondata('login', 'gudang')[0]['id'])

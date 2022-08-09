@@ -92,7 +92,8 @@ class Gudang_model extends CI_Model
                  ->join('wilayah', 'wilayah.id = users.wilayah')
                  ->get('users')->result_array();
             $items = $this->db->select('*')
-                ->where('items.gudang', $v['id'])
+                ->where('barang_gudang.gudang', $v['id'])
+                ->join('barang_gudang', 'barang_gudang.barang = items.id_item')
                 ->join('categories', 'categories.id_category = items.id_category')
                 ->join('units', 'units.id_unit = items.id_unit')
                 ->get('items')->result_array();

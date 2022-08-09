@@ -31,6 +31,9 @@
 								<li class="nav-item">
 									<a class="nav-link" id="transaksi" data-toggle="tab" href="#transaksi-content" role="tab" aria-controls="transaksi" aria-selected="false">Transaksi</a>
 								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="items" data-toggle="tab" href="#items-content" role="tab" aria-controls="items" aria-selected="false">Barang</a>
+								</li>
 							</ul>
 						</div>
 						<div class="tab-content col-12" id="myTabContent">
@@ -39,6 +42,9 @@
 							</div>
 							<div class="tab-pane fade" id="transaksi-content" role="tabpanel" aria-labelledby="transaksi">
 								<?php $this->load->view('gudang/sub/transaksi', array('transaksi' => $transaksi)) ?>
+							</div>
+							<div class="tab-pane fade" id="items-content" role="tabpanel" aria-labelledby="items">
+								<?php $this->load->view('gudang/sub/items', array('items' => $gudang[0]['items'])) ?>
 							</div>
 						</div>
 					</div>
