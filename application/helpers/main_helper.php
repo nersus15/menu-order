@@ -9,7 +9,7 @@ if (!method_exists($this, 'response')) {
         if ($code != 200)
             $type = 'Error';
 
-        if(is_object($message))
+        if (is_object($message))
             $message = (array) $message;
         if (is_string($message) || is_int($message) || is_bool($message))
             $responsse['message'] = $message;
@@ -21,30 +21,30 @@ if (!method_exists($this, 'response')) {
         else
             $responsse['type'] = $message['type'];
 
-        if($code != 200 && $format == 'json')
+        if ($code != 200 && $format == 'json')
             header("message: " . json_encode($responsse));
-        
-        if ($format == 'json'){
+
+        if ($format == 'json') {
             header('Content-Type: application/json');
             echo json_encode($responsse);
-        }
-        elseif ($format == 'html') {
+        } elseif ($format == 'html') {
             echo '<script> var path = "' . base_url() . '"</script>';
             echo $responsse['message'];
         }
         exit();
     }
 }
-if(!function_exists('kapitalize')){
-    function kapitalize($string, $tipe = 'firstword'){
-        if($tipe == 'all'){
+if (!function_exists('kapitalize')) {
+    function kapitalize($string, $tipe = 'firstword')
+    {
+        if ($tipe == 'all') {
             return strtoupper($string);
-        }elseif($tipe == 'first'){
+        } elseif ($tipe == 'first') {
             return ucfirst(strtolower($string));
-        }elseif($tipe == 'firstword'){
+        } elseif ($tipe == 'firstword') {
             $str = explode(' ', $string);
             $tmp = [];
-            foreach($str as $s) {
+            foreach ($str as $s) {
                 $tmp[] = ucfirst(strtolower($s));
             }
 
@@ -62,16 +62,16 @@ if (!method_exists($this, 'httpmethod')) {
 if (!method_exists($this, 'sessiondata')) {
     function sessiondata($index = 'login', $kolom = null, $default = null)
     {
-        if($index == 'login' && defined('APPNAME'))
+        if ($index == 'login' && defined('APPNAME'))
             $index .= '_' . APPNAME;
-            
+
         // if (!is_login())
         //     return;
         /** @var CI_Controller $CI */
-        $CI =& get_instance();
+        $CI = &get_instance();
 
         $data = $CI->session->userdata($index);
-        return( empty($kolom) ? $data : (empty($data[$kolom]) ? $default : $data[$kolom]));
+        return (empty($kolom) ? $data : (empty($data[$kolom]) ? $default : $data[$kolom]));
     }
 }
 
@@ -86,27 +86,26 @@ if (!method_exists($this, 'config_sidebar')) {
     function config_sidebar($configName = 'comp', $sidebar, int $activeMenu = null, $subMenuConf = null)
     {
         /** @var CI_Controller $ci */
-        $ci =& get_instance();
+        $ci = &get_instance();
 
         $ci->load->config($configName);
         $compConf = $ci->config->item('comp');
         $sidebarConf = $compConf['dore']['sidebar'][$sidebar];
-        if(!is_null($activeMenu))
+        if (!is_null($activeMenu))
             $sidebarConf['menus'][$activeMenu]['active'] = true;
 
         if (!empty($subMenuConf)) {
             $sidebarConf['subMenus'][$subMenuConf['sub']]['menus'][$subMenuConf['menu']]['active'] = true;
         }
-        
+
         // Tandai sebagai menu sidebar
-        foreach($sidebarConf['menus']  as $k => $m){
+        foreach ($sidebarConf['menus']  as $k => $m) {
             $sidebarConf['menus'][$k]['parrent_element'] = 'sidebar';
             $sidebarConf['menus'][$k]['id'] = '-';
-
         }
 
-        foreach($sidebarConf['subMenus'] as $k => $sb){
-            foreach($sb['menus'] as $k1 => $m){
+        foreach ($sidebarConf['subMenus'] as $k => $sb) {
+            foreach ($sb['menus'] as $k1 => $m) {
                 $sidebarConf['subMenus'][$k]['menus'][$k1]['parrent_element'] = 'sidebar';
             }
         }
@@ -130,17 +129,17 @@ if (!method_exists($this, 'is_login')) {
     function is_login($role = null, $wil = null, $callback = null)
     {
         /** @var CI_Controller $ci */
-        $ci =& get_instance();
+        $ci = &get_instance();
         $userdata = sessiondata('login');
-        if(!empty($callback) && is_callable($callback))
-           return $callback($role, $wil, $userdata);
+        if (!empty($callback) && is_callable($callback))
+            return $callback($role, $wil, $userdata);
 
         if (empty($role) && empty($wil)) {
-                return !empty($userdata);
+            return !empty($userdata);
         } elseif (!empty($userdata) && !empty($role) && empty($wil)) {
-                return $userdata['user_role'] == $role;
+            return $userdata['user_role'] == $role;
         } elseif (!empty($userdata) && empty($role) && !empty($wil)) {
-                return $userdata['wilayah'] == $wil;
+            return $userdata['wilayah'] == $wil;
         } elseif (!empty($userdata) && !empty($role) && !empty($wil)) {
             return $userdata['wilayah'] == $wil && $userdata['role'] == $role;
         }
@@ -153,8 +152,8 @@ if (!method_exists($this, 'include_view')) {
         // if (is_array($data))
         //     extract($data);
         // include get_path(APPPATH . 'views/' . $path . '.php');
-        $ci =& get_instance();
-        echo $ci->load->view(get_path($path) .".php", $data, true);
+        $ci = &get_instance();
+        echo $ci->load->view(get_path($path) . ".php", $data, true);
     }
 }
 
@@ -168,80 +167,82 @@ if (!method_exists($this, 'rupiah_format')) {
 
 
 // CONVERT PATH
-if(!method_exists($this, 'get_path')){
-    function get_path($path){
+if (!method_exists($this, 'get_path')) {
+    function get_path($path)
+    {
         return DIRECTORY_SEPARATOR == '/' ? str_replace('\\', '/', $path) : str_replace('/', '\\', $path);
-
     }
 }
 
-if ( ! function_exists('attribut_ke_str'))
-{
-	function attribut_ke_str($attribute, $delimiter = ' ', $dg_quote = true)
-	{
-		$str = '';
-		if (is_array($attribute)) {
-			foreach ($attribute as $key => $value) {
-				if ($value !== '0' && empty($value))
-					$str .= $key;
-				else {
-					$str .= $key . '=';
-					if (is_array($value))
-						$value = implode(' ', $value);
-					$str .= $dg_quote ? '"' . $value . '"' : $value;
-				}
-				$str .= $delimiter;
-			}
-			
-			$str = substr($str, 0, strlen($str) - strlen($delimiter));
-		}
-		return $str;
-	}
+if (!function_exists('attribut_ke_str')) {
+    function attribut_ke_str($attribute, $delimiter = ' ', $dg_quote = true)
+    {
+        $str = '';
+        if (is_array($attribute)) {
+            foreach ($attribute as $key => $value) {
+                if ($value !== '0' && empty($value))
+                    $str .= $key;
+                else {
+                    $str .= $key . '=';
+                    if (is_array($value))
+                        $value = implode(' ', $value);
+                    $str .= $dg_quote ? '"' . $value . '"' : $value;
+                }
+                $str .= $delimiter;
+            }
+
+            $str = substr($str, 0, strlen($str) - strlen($delimiter));
+        }
+        return $str;
+    }
 }
 
-if ( ! function_exists('str_ke_attribut'))
-{
-	function str_ke_attribut($str, $delimiter = '/[=\n]/')
-	{
-		$attribute = array();
-		
-		$a = preg_split($delimiter, $str, -1, PREG_SPLIT_NO_EMPTY);
-		for ($i = 0; $i < count($a); $i+=2) {
-			$attribute[$a[$i]] = $a[$i+1];
-		}
-		return $attribute;
-	}
+if (!function_exists('str_ke_attribut')) {
+    function str_ke_attribut($str, $delimiter = '/[=\n]/')
+    {
+        $attribute = array();
+
+        $a = preg_split($delimiter, $str, -1, PREG_SPLIT_NO_EMPTY);
+        for ($i = 0; $i < count($a); $i += 2) {
+            $attribute[$a[$i]] = $a[$i + 1];
+        }
+        return $attribute;
+    }
 }
-if(!function_exists('starWith')){
-    function startWith( $haystack, $needle ) {
-        $length = strlen( $needle );
-        return substr( $haystack, 0, $length ) === $needle;
-   }
+if (!function_exists('starWith')) {
+    function startWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        return substr($haystack, 0, $length) === $needle;
+    }
 }
 
-if(!function_exists('endWith')){
-    function endWith( $haystack, $needle ) {
-        $length = strlen( $needle );
-        if( !$length ) {
+if (!function_exists('endWith')) {
+    function endWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        if (!$length) {
             return true;
         }
-        return substr( $haystack, -$length ) === $needle;
+        return substr($haystack, -$length) === $needle;
     }
 }
 
-if(!function_exists('assets_url')){
-    function assets_url($path = null){
+if (!function_exists('assets_url')) {
+    function assets_url($path = null)
+    {
         return base_url('assets/' . $path);
     }
 }
 
-if(!function_exists('sandi')){
-      /**
+if (!function_exists('sandi')) {
+    /**
      * @param String $text
      * @param String $type ['AN', 'AZ'] - [default: 'AN']
      * @return String
      */
-    function sandi($text, $type = "AN"){
+    function sandi($text, $type = "AN")
+    {
         $result = null;
         $an = [
             'a' => 'n',
@@ -317,6 +318,19 @@ if(!function_exists('sandi')){
             'K' => 'X',
             'L' => 'Y',
             'M' => 'Z',
+            'N' => 'M',
+            'O' => 'L',
+            'P' => 'K',
+            'Q' => 'J',
+            'R' => 'I',
+            'S' => 'H',
+            'T' => 'G',
+            'U' => 'F',
+            'V' => 'E',
+            'W' => 'D',
+            'X' => 'C',
+            'Y' => 'B',
+            'Z' => 'A',
 
             '-' => '+',
             '_' => '=',
@@ -326,19 +340,27 @@ if(!function_exists('sandi')){
         ];
         $an_flip = array_flip($an);
         $az_flip = array_flip($az);
-        if($type == "AN"){
-            foreach(str_split($text) as $char){
-                if(isset($an[$char]))
-                    $result .= $an[$char];
-                elseif(isset($an_flip[$char]))
-                    $result .= $an_flip[$char];
+        if ($type == "AN") {
+            foreach (str_split($text) as $char) {
+                if(is_numeric($char) && !in_array($char, ['*', '-', '+', '/'])){
+                    $result .= $char;
+                }else{
+                    if (isset($an[$char]))
+                        $result .= $an[$char];
+                    elseif (isset($an_flip[$char]))
+                        $result .= $an_flip[$char];
+                }
             }
-        }else if($type == "AZ"){
-            foreach(str_split($text) as $char){
-                if(isset($az[$char]))
-                    $result .= $az[$char];
-                elseif(isset($az_flip[$char]))
-                    $result .= $az_flip[$char];
+        } else if ($type == "AZ") {
+            foreach (str_split($text) as $char) {
+                if (is_numeric($char) && !in_array($char, ['*', '-', '+', '/'])) {
+                    $result .= $char;
+                } else {
+                    if (isset($az[$char]))
+                        $result .= $az[$char];
+                    elseif (isset($az_flip[$char]))
+                        $result .= $az_flip[$char];
+                }
             }
         }
         return $result;

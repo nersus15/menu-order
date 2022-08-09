@@ -31,8 +31,12 @@ class Incomingitem_model extends CI_Model
 			->join("items", "items.id_item = transaksi.id_items")
 			->join("gudang", "gudang.id = transaksi.gudang_asal")
 			->join("wilayah", "wilayah.id = gudang.wilayah")
-			->where('jenis', 'masuk')
-			->where('id_transaksi', $id);
+			->where('jenis', 'masuk');
+			if(is_string($id))
+				$q->where('id_transaksi', $id);
+			elseif(is_array($id))
+				$q->where_in('id_transaksi', $id);
+				
 		if($tampilkandihapus){
 			$q->select('penghapus.user_name as nama_penghapus')
 				->join('users penghapus', 'penghapus.id_user = transaksi.penghapus', 'left');
@@ -70,7 +74,10 @@ class Incomingitem_model extends CI_Model
 			"transaksi_qty" => $incomingItemData["incoming_item_qty"],
 			"jenis" => 'masuk',
 			'gudang' => $incomingItemData['gudang'],
-			'pencatat' => sessiondata('login', 'id_user')
+			'pencatat' => sessiondata('login', 'id_user'),
+			'verified' => isset($incomingItemData['verified']) ? $incomingItemData['verified'] : 0, 
+			'nota' => isset($incomingItemData['nota']) ? $incomingItemData['nota'] : null,
+			'keterangan' => isset($incomingItemData['keterangan']) ? $incomingItemData['keterangan'] : null
 		];
 
 		$new_price = ($incomingItemData['incoming_price'] + $incomingItemData['old_price'])/2;
@@ -80,7 +87,7 @@ class Incomingitem_model extends CI_Model
 		$average = ((($incomingItemData['incoming_price'] - $incomingItemData['old_price'])/ ($incomingItemData['old_stok'] + $incomingItemData["incoming_item_qty"])) * $incomingItemData['incoming_item_qty']) + $incomingItemData['old_price'];
 
 		$this->db->where('id_item', $incomingItemData['id_items'])
-			->update('items', ['item_price' => round($average), 'item_stock' =>  $incomingItemData['item_stock_total']]);
+			->update('items', ['item_price' => round($average)]);
 	}
 
 	public function deleteSelectedIncomingItem($id)

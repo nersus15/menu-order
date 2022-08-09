@@ -113,6 +113,36 @@ class Gudang_model extends CI_Model
         }
     }
 
+    function update($data, $idgudang){
+        extract($data);
+        try {
+            $this->db->where('gudang.id', $idgudang)->update('gudang', $gudang);
+
+            if(isset($staff) && !empty($staff)){
+                $this->db->where_in('users.id_user', $staff)->update('users', ['gudang' => $idgudang]);
+            }else{
+                $this->db->where('users.gudang', $idgudang)->update('users', ['gudang' => null]);
+            }
+            if(isset($admin) && !empty($admin)){
+                $this->db->where('admin_gudang.gudang', $idgudang)->delete('admin_gudang');
+                $tmp = [];
+                foreach($admin as $id){
+                    $tmp[] = array(
+                        'admin' => $id,
+                        'gudang' => $idgudang
+                    );
+                }
+                $this->insertAdmin($tmp);
+            }else{
+                $this->db->where('admin_gudang.gudang', $idgudang)->delete('admin_gudang');
+            }
+
+        } catch (\Throwable $th) {
+            $this->session->set_flashdata('message', ['message' => $th::getMessage(), 'type' => 'danger']);
+            redirect('gudang/update/' . $idgudang);
+        }
+    }
+
     function insertAdmin($data, $gudang = null, $redirect = null){
         try {
             if(!empty($gudang)){

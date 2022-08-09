@@ -53,7 +53,7 @@ class User extends CI_Controller
 				if ($this->upload->do_upload('user_avatar')) {
 					$userAvatar = $this->upload->data('file_name');
 				} else {
-					$userAvatar = "default.jpg";
+					$userAvatar = "default.png";
 				}
 			}
 			$userData = [
@@ -67,15 +67,13 @@ class User extends CI_Controller
 				"user_role" => $role
 			];
 			$dataGudang = [];
-			if(!empty($post['gudang'])){
+			if(!empty($post['gudang']) && (count($post['gudang']) == 1 && !empty($post['gudang'][0]))){
 				$gudang = $post['gudang'];
 				if($role == 'staff'){
 					$userData['gudang'] = $gudang[0];
 				}else{
 					$dataGudang = $gudang;
 				}
-				
-
 			}
 			$this->User_model->insertNewUser($userData);
 			if($role == 'admin' && !empty($dataGudang)){

@@ -36,6 +36,7 @@
 							<div class="card">
 								<div class="card-body">
 									<div class="table-responsive">
+										<?= date('H:i:s', time()) ?>
 										<table class="table table-striped" id="table-1">
 											<thead>
 												<tr>
@@ -48,6 +49,7 @@
 													<th>Nama Barang</th>
 													<th>Jumlah Keluar</th>
 													<th>Tujuan</th>
+													<th>Nota</th>
 													<th>Aksi</th>
 												</tr>
 											</thead>
@@ -61,7 +63,12 @@
 														<td><?= $outcoming_item["item_code"] ?></td>
 														<td><?= $outcoming_item["item_name"] ?></td>
 														<td><?= $outcoming_item["transaksi_qty"] ?></td>
-														<td><?= !empty($outcoming_item['tujuan']) && strlen($outcoming_item['tujuan']) > 8 ? $outcoming_item['tujuan'] : $outcoming_item["namagudang"] .  " - " . ($outcoming_item['lvlwil'] == '1' ? 'Prov. ' : ($outcoming_item['lvlwil'] == '3' ? 'Kec. ' : null)) . kapitalize($outcoming_item['namawil']) ?></td>
+														<td><?= !empty($outcoming_item['tujuan']) && strlen($outcoming_item['tujuan']) > 8 ? kapitalize($outcoming_item['tujuan']) : $outcoming_item["namagudang"] .  " - " . ($outcoming_item['lvlwil'] == '1' ? 'Prov. ' : ($outcoming_item['lvlwil'] == '3' ? 'Kec. ' : null)) . kapitalize($outcoming_item['namawil']) ?></td>
+														<td>
+															<?php if(!empty($incoming_item['nota'])): ?>
+																<a href="<?= ASSET_PATH . 'nota/' . $incoming_item['nota'] ?>" target="_blank">Lihat Nota</a>
+															<?php endif?>
+														</td>
 														<td>
 															<a href="<?= base_url("outcomingitem/delete/" . $outcoming_item["id_transaksi"]) ?>" class="btn btn-icco btn-danger btn-delete"><i class="fas fa-trash"></i></a>
 														</td>

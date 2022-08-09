@@ -102,7 +102,7 @@
 				}else{
 					notifItem += '<div class="d-flex flex-row mb-3 pb-3 border-bottom">' +
 							'<div class="pl-3 pr-2">' +
-								'<a style="color: black" class="text-primary nitem" data-id="'+ n.id +'" href="'+ link +'">' +
+								'<a style="color: black" class="nitem" data-id="'+ n.id +'" href="'+ link +'">' +
 									'<p class="font-weight-medium mb-1">'+ n.pesan +'</p>' +
 									'<p class="text-muted mb-0 text-small">'+ n.dibuat +'</p>' +
 								'</a>' +
@@ -144,14 +144,13 @@
 					renderNotifikasi();
 				});
 			}
-			
 			if(link != '#')
-				window.location.href = link;
-			else{
-				notifikasi(notifItem.pesan, {saatTutup: function(){
-					renderNotifikasi();
-				}});
-			}
+				notifItem.pesan += '<div class="modal-footer"><a class="btn btn-md btn-info" href="' + link + '"> Go </a></div>';
+			notifikasi(notifItem.pesan, {
+				saatTutup: function(){
+				renderNotifikasi();
+			}});
+			
 
 		});
 	};

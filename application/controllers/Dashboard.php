@@ -19,6 +19,7 @@ class Dashboard extends CI_Controller
 			// "total_customers" => $this->db->get("customers")->num_rows(),
 			"total_items" => $this->db->get("items")->num_rows(),
 		];
+		
 
 		$this->load->view("v_dashboard", $data);
 	}

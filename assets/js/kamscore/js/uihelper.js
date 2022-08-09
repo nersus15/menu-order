@@ -27,7 +27,8 @@ uihelper = function () {
     var instance = {
         validator: {},
         dropzone: {},
-        dataTables: {}
+        dataTables: {},
+        tableAppend: {},
     };
 
 
@@ -416,7 +417,7 @@ uihelper = function () {
             saatBuka: opsi.saatBuka == undefined ? function () { } : opsi.saatBuka,
             saatTutup: opsi.saatBuka == undefined ? function () { } : opsi.saatTutup,
             modalBody: {
-                customBody: '<h4>' + pesan + '</h4>'
+                customBody: pesan
             }
         });
     }
@@ -930,6 +931,108 @@ uihelper = function () {
             delay: 3000,
             bg: 'bg-primary'
         });
+    }
+
+    $.fn.tableAppend = function (opt = {}) {
+        var tableid = this.attr('id');
+        var table = $("#" + tableid);
+        var tbody = table.find('tbody');
+        var template = tbody.find('tr')[0];
+        var index = 0;
+
+        var addbtn = opt.buttonadd ? opt.buttonadd : '.btn-add';
+        var removebtn = opt.buttonremove ? opt.buttonremove : '.btn-remove';
+
+        if(opt.removeTemplate){
+            tbody.empty();
+            index = null;
+        }else{
+            var currentRow = tbody.find('tr')[0]
+            $(currentRow).addClass('row-0');
+            $(currentRow).attr('data-index', 0);
+        }
+            
+        if(tbody.find(addbtn).length > 0){
+            tbody.find(addbtn).click(addRow);
+        }    
+        if(tbody.find(removebtn).length > 0){
+            tbody.find(removebtn).click(removeRow);
+        }    
+        
+
+        function addRow(e){
+            e.preventDefault();
+            var currentRow = tbody.find('tr')[index];
+            $(currentRow).after($(template).prop('outerHTML'));
+            if(index == null){
+                var currentRow = tbody.find('tr')[0]
+                $(currentRow).addClass('row-0');
+                $(currentRow).attr('data-index', 0);
+                index = 0;
+            }else{
+                var currentRow = tbody.find('tr')[index + 1]
+                $(currentRow).removeClass('row-0');
+                $(currentRow).addClass('row-' + parseInt(index + 1));
+                $(currentRow).attr('data-index', index + 1);
+                index++;
+            }
+            reindexing();
+            var currentRow = tbody.find('tr')[index];
+            $(currentRow).find(addbtn).click(addRow);
+            $(currentRow).find(removebtn).click(removeRow);
+
+            if(opt.addCallback && typeof(opt.addCallback) == 'function'){
+                var currentRow = tbody.find('tr')[index];
+             
+                opt.addCallback(currentRow, index);
+            }
+
+           
+        }
+
+        function removeRow(e){
+            e.preventDefault();
+            var rindex = $(this).parent().parent().data('index');
+            var el = tbody.find('tr')[rindex];
+
+           console.log(el);
+            if(opt.beforeDelete && typeof(opt.beforeDelete) == 'function'){
+                opt.beforeDelete(el, rindex);
+            }
+            index--;
+            $(el).remove();
+            reindexing();
+        }
+
+        function reindexing(){
+            var rows = tbody.find('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                var el = $(rows[i]);
+                var currIndex = el.data('index');
+
+                el.removeClass('row-' + currIndex);
+                el.addClass('row-' + i);
+                el.attr('data-index', i);
+
+                var btnadd = el.find(addbtn);
+                var btnremove = el.find(removebtn);
+                if(i == rows.length - 1){
+                    if(i > 0)
+                        btnremove.show();
+                    else
+                        btnremove.hide();
+
+                    btnadd.show();
+                }else{
+                    btnremove.show();
+                    btnadd.hide();
+                }
+            }
+        }
+
+        setInstance('tableAppend', tableid, this);
+
     }
     return this;
 }();

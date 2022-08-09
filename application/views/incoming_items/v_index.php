@@ -49,6 +49,7 @@
 													<th>Nama Barang</th>
 													<th>Jumlah Masuk</th>
 													<th>Asal</th>
+													<th>Nota</th>
 													<th>Aksi</th>
 												</tr>
 											</thead>
@@ -63,6 +64,11 @@
 														<td><?= $incoming_item["item_name"] ?></td>
 														<td><?= $incoming_item["transaksi_qty"] ?></td>
 														<td><?= $incoming_item["namagudang"] .  " - " . ($incoming_item['lvlwil'] == '1' ? 'Prov. ' : ($incoming_item['lvlwil'] == '3' ? 'Kec. ' : null)) . kapitalize($incoming_item['namawil']) ?></td>
+														<td>
+															<?php if(!empty($incoming_item['nota'])): ?>
+																<a href="<?= base_url('assets/nota/' . $incoming_item['nota']) ?>" target="_blank">Lihat Nota</a>
+															<?php endif?>
+														</td>
 														<td>
 															<a href="<?= base_url("incomingitem/delete/" . $incoming_item["id_transaksi"]) ?>" class="btn btn-icco btn-danger btn-delete"><i class="fas fa-trash"></i></a>
 														</td>

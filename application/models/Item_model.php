@@ -7,7 +7,8 @@ class Item_model extends CI_Model
 		$query = $this->db->select("*")
 			->from("items")
 			->join("categories", "categories.id_category = items.id_category")
-			->join("units", "units.id_unit = items.id_unit");
+			->join("units", "units.id_unit = items.id_unit")
+			->join('barang_gudang', 'barang_gudang.barang = items.id_item');
 
 		if(!empty($filters)){
 			if(!empty($filters)){
@@ -37,31 +38,38 @@ class Item_model extends CI_Model
 
 	public function insertNewItem($itemData)
 	{
+		$gudang = $itemData['gudang'];
+		$stock = $itemData['item_stock'];
+		unset($itemData['gudang'], $itemData['item_stock']);
 		$this->db->insert("items", $itemData);
+		$insert_id = $this->db->insert_id();
+		$this->db->insert('barang_gudang', ['barang' => $insert_id, 'gudang' => $gudang, 'item_stock' => $stock]);
+	
 	}
 
-	public function updateSelectedItem($itemCode, $id)
+	public function updateSelectedItem($itemCode, $id, $gudang)
 	{
 		$this->db->set("id_category", $itemCode["id_category"]);
 		$this->db->set("id_unit", $itemCode["id_unit"]);
 		$this->db->set("item_code", $itemCode["item_code"]);
 		$this->db->set("item_name", $itemCode["item_name"]);
 		$this->db->set("item_image", $itemCode["item_image"]);
-		$this->db->set("item_stock", $itemCode["item_stock"]);
 		$this->db->set("item_price", $itemCode["item_price"]);
 		$this->db->set("item_description", $itemCode["item_description"]);
 		$this->db->where("id_item", $id);
 		$this->db->update("items");
+		
+		$this->db->where('gudang', $gudang)->where('barang', $id)->update('barang_gudang', ['item_stock' =>  $itemCode["item_stock"]]);
 	}
 
-	public function deleteSelectedItem($id)
+	public function deleteSelectedItem($id, $gudang)
 	{
-		$item = $this->Item_model->getItemById($id);
+		$item = $this->getItemById($id);
 		if (file_exists('./assets/uploads/items/' . $item["item_image"]) && $item["item_image"] != "default.png") {
 			unlink('./assets/uploads/items/' . $item["item_image"]);
 		}
-		$this->db->where("id_item", $id);
-		$this->db->delete("items");
+		$this->db->where("barang", $id)->where('gudang', $gudang);
+		$this->db->delete("barang_gudang");
 	}
 
 	public function makeItemCode()

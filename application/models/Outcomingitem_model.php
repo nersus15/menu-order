@@ -22,6 +22,57 @@ class Outcomingitem_model extends CI_Model
 		}
 		return $query->get()->result_array();
 	}
+	public function getAllIncomingItemById($id, $tampilkandihapus = false)
+	{
+		$q = $this->db->select("transaksi.*, items.*, users.user_name as nama_pencatat, gudang.nama as namagudang, wilayah.nama namawil, wilayah.level as lvlwil")
+			->from("transaksi")
+			->join("users", "users.id_user = transaksi.pencatat")
+			->join("items", "items.id_item = transaksi.id_items")
+			->join("gudang", "gudang.id = transaksi.gudang")
+			->join("wilayah", "wilayah.id = gudang.wilayah")
+			->where('jenis', 'keluar');
+			if(is_string($id))
+				$q->where('id_transaksi', $id);
+			elseif(is_array($id))
+				$q->where_in('id_transaksi', $id);
+				
+		if($tampilkandihapus){
+			$q->select('penghapus.user_name as nama_penghapus')
+				->join('users penghapus', 'penghapus.id_user = transaksi.penghapus', 'left');
+		}else{
+			$q->where('dihapus IS NULL', null, false);
+		}
+		return $q->get()->row_array();
+	}
+	public function getAllIncomingItemBy($where = null, $tampilkandihapus = false)
+	{
+		$q = $this->db->select("transaksi.*, items.*, users.user_name as nama_pencatat, gudang.nama as namagudang, wilayah.nama namawil, wilayah.level as lvlwil")
+			->from("transaksi")
+			->join("users", "users.id_user = transaksi.pencatat")
+			->join("items", "items.id_item = transaksi.id_items")
+			->join("gudang", "gudang.id = transaksi.gudang")
+			->join("wilayah", "wilayah.id = gudang.wilayah")
+			->where('jenis', 'keluar');
+		if(!empty($where)){
+			if(!empty($where)){
+				foreach($where as $k => $v){
+					if(is_numeric($k)){
+						$q->where($v, null, false);
+					}else{
+						$q->where($k, $v);
+					}
+				}
+			}
+		}
+				
+		if($tampilkandihapus){
+			$q->select('penghapus.user_name as nama_penghapus')
+				->join('users penghapus', 'penghapus.id_user = transaksi.penghapus', 'left');
+		}else{
+			$q->where('dihapus IS NULL', null, false);
+		}
+		return $q->get()->result_array();
+	}
 
 	public function insertNewOutcomingItem($outcomingItemData)
 	{

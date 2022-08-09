@@ -50,7 +50,7 @@
 													<select name="tujuan" id="tujuan" class="form-control select2  <?= form_error('tujuan') ? 'is-invalid' : '' ?>">
 														<option value="" disabled selected>--Pilih Gudang--</option>
 														<?php foreach ($gudang as $v) : ?>
-															<option data-level="<?= $v['level_wilayah']?>" value="<?= $v['id'] ?>"><?= $v['nama'] . " - " . ($v['level_wilayah'] == '1' ? 'Prov. ' :( $v['level_wilayah'] == '3' ?  'Kec. ' : '') ).  kapitalize($v['wilayah_gudang']) ?></option>
+															<option data-level="<?= $v['level_wilayah'] ?>" value="<?= $v['id'] ?>"><?= $v['nama'] . " - " . ($v['level_wilayah'] == '1' ? 'Prov. ' : ($v['level_wilayah'] == '3' ?  'Kec. ' : '')) .  kapitalize($v['wilayah_gudang']) ?></option>
 														<?php endforeach; ?>
 													</select>
 													<?= form_error('tujuan', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
@@ -60,33 +60,51 @@
 													<input name="toko" id="toko" class="form-control <?= form_error('toko') ? 'is-invalid' : '' ?>" />
 													<?= form_error('toko', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 												</div>
-												<div class="form-group">
-													<label for="id_items">Barang</label>
-													<select name="id_items" id="ItemId" class="form-control select2">
-														<option value="" disabled selected>--Pilih Barang--</option>
-														<?php foreach ($items as $item) : ?>
-															<option value="<?= $item["id_item"] ?>"><?= $item["item_code"] ?> | <?= $item["item_name"] ?></option>
-														<?php endforeach; ?>
-													</select>
-													<?= form_error('id_items', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
-												</div>
-												<div class="form-group">
-													<label for="item_stock">Stock Barang</label>
-													<input type="number" class="form-control" name="item_stock" id="ItemStock" placeholder="Stock Barang" readonly>
-												</div>
-												<div class="form-group">
-													<label for="outcoming_item_qty">Jumlah Barang Keluar</label>
-													<div class="input-group">
-														<input type="number" class="form-control <?= form_error('outcoming_item_qty') ? 'is-invalid' : '' ?>" name="outcoming_item_qty" id="OutcomingItemQty" placeholder="Jumlah Stok Masuk">
-														<div class="input-group-append">
-															<span class="input-group-text" id="unitName">Satuan</span>
-														</div>
-													</div>
-													<div class="invalid-feedback" id="errorValue">Jumlah Barang Keluar lebih besar dari stok barang</div>
-												</div>
-												<div class="form-group">
-													<label for="item_stock_total">Sisa Stock Barang</label>
-													<input type="number" class="form-control" name="item_stock_total" id="ItemStockTotal" placeholder="Jumlah Total Stock" readonly>
+												<div class="row" style="overflow-x: scroll;">
+													<table class="table table-hover" id="barang-keluar">
+														<thead>
+															<tr>
+																<th>Barang</th>
+																<th>Stok</th>
+																<th>Jumlah</th>
+																<th>Sisa</th>
+																<th></th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr>
+																<td>
+																	<select name="id_items[]" class="form-control select2 barang">
+																		<option value="" disabled selected>--Pilih Barang--</option>
+																		<?php foreach ($items as $item) : ?>
+																			<option value="<?= $item["id_item"] ?>"><?= $item["item_code"] ?> | <?= $item["item_name"] ?></option>
+																		<?php endforeach; ?>
+																	</select>
+																	<?= form_error('id_items', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+																</td>
+																<td>
+																	<input type="number" class="form-control item-stock" name="item_stock[]" placeholder="Stock Barang" readonly>
+																</td>
+																<td>
+																	<div class="input-group">
+																		<input min="0" type="number" class="form-control <?= form_error('outcoming_item_qty') ? 'is-invalid' : '' ?> OutcomingItemQty" name="outcoming_item_qty[]" placeholder="Jumlah Stok Masuk">
+																		<div class="input-group-append">
+																			<span class="input-group-text unitName">Satuan</span>
+																		</div>
+																	</div>
+																	<div class="invalid-feedback errorValue">Jumlah Barang Keluar lebih besar dari stok barang</div>
+																</td>
+																<td>
+																	<input type="number" class="form-control itemstoktotal" name="item_stock_total[]" placeholder="Jumlah Total Stock" readonly>
+
+																</td>
+																<td>
+																	<button type="button" id="add" class="btn btn-primary btn-xs"><i class="fas fa-plus"></i></button>
+																	<button style="display: none;" type="button" id="remove" class="btn btn-danger btn-xs"><i class="fas fa-minus"></i></button>
+																</td>
+															</tr>
+														</tbody>
+													</table>
 												</div>
 												<hr>
 												<div class="form-action">
@@ -116,77 +134,110 @@
 		$(document).ready(function() {
 
 			var dataItem = <?= json_encode($items) ?>;
-			$('#ItemId').change(function(e) {
-				e.preventDefault();
-				var value = $(this).val();
-				var barang = dataItem.filter(item => item.id_item == value);
-				if (barang.length == 0) {
-					return
+			$("#barang-keluar").tableAppend({
+				buttonadd: '#add',
+				buttonremove: '#remove',
+				addCallback: function(row, index) {
+					initInput();
+					var select2 = $(row).find('select.select2');
+					select2.next().remove();
+					select2.removeClass("select2-hidden-accessible")
+					select2.select2();
+					select2.parent().find('span').css('max-width', '155px')
 				}
-				barang = barang[0];
-				var stock = barang.item_stock;
-
-				$('#ItemStock').val(stock);
-				var stockOut = $('#OutcomingItemQty').val();
-				if (!stockOut) {
-					stockOut = 0;
-				}
-
-				stockOut = parseInt(stockOut);
-				if (parseInt(stock) < stockOut) {
-					$('#errorValue').show();
-					$('button[type="submit"]').prop('disabled', true);
-					$('#ItemStockTotal').val(stock);
-					return
-				} else {
-					$('#errorValue').hide();
-					$('button[type="submit"]').prop('disabled', false);
-				}
-
-				var totalStock = stock - stockOut;
-				totalStock = parseInt(totalStock);
-				$('#ItemStockTotal').val(totalStock);
-
-				var unitName = barang.unit_name;
-				$('#unitName').text(unitName);
-
-			})
-
-			$('#OutcomingItemQty').keyup(function() {
-				var total = $('#ItemStock').val();
-				var value = $(this).val();
-
-				if (!total) {
-					total = 0;
-				}
-
-				total = parseInt(total);
-
-				if (!value)
-					value = 0
-				value = parseInt(value);
-				if (value > total) {
-					$('#errorValue').show();
-					$('button[type="submit"]').prop('disabled', true);
-					$('#ItemStockTotal').val(total);
-					return
-				} else {
-					$('#errorValue').hide();
-					$('button[type="submit"]').prop('disabled', false);
-				}
-				$('#ItemStockTotal').val(parseInt(total) - parseInt(value));
 			});
-			$("input[name='jenis_tujuan']").change(function(){
+			var selectedBarang;
+
+			function initInput() {
+				$('.barang').change(function(e) {
+					e.preventDefault();
+					var row = $(this).parent().parent();
+					var index = $(row).data('index');
+					var value = $(this).val();
+					var barang = dataItem.filter(item => item.id_item == value)[0];
+					if (barang.length == 0) {
+						return
+					}
+					selectedBarang = value;
+					var stock = barang.item_stock;
+					var itemStock = $('tr.row-' + index + ' .item-stock');
+					var errorValue = $('tr.row-' + index + ' .errorValue');
+					var sisa = $('tr.row-' + index + ' .itemstoktotal');
+					var satuan = $('tr.row-' + index + ' .unitName');
+					var jumlah = $('tr.row-' + index + ' .OutcomingItemQty');
+					console.log(barang);
+
+					itemStock.val(stock);
+					var stockOut = jumlah.val();
+					if (!stockOut) {
+						stockOut = 0;
+					}
+
+					stockOut = parseInt(stockOut);
+					if (parseInt(stock) < stockOut) {
+						errorValue.show();
+						$('button[type="submit"]').prop('disabled', true);
+						sisa.val(stock);
+						return
+					} else {
+						errorValue.hide();
+						$('button[type="submit"]').prop('disabled', false);
+					}
+
+					var totalStock = stock - stockOut;
+					totalStock = parseInt(totalStock);
+					sisa.val(totalStock);
+
+					var unitName = barang.unit_name;
+					satuan.text(unitName);
+
+				})
+
+				$('.OutcomingItemQty').change(function() {
+					var row = $(this).parent().parent().parent();
+					var index = $(row).data('index');
+
+					var barang = dataItem.filter(item => item.id_item == selectedBarang)[0];
+					var total = $('tr.row-' + index + ' .item-stock').val();
+					var value = $(this).val();
+					var sisa = $('tr.row-' + index + ' .itemstoktotal');
+					var errorValue = $('tr.row-' + index + ' .errorValue');
+
+					if (!total) {
+						total = 0;
+					}
+
+					total = parseInt(total);
+
+					if (!value)
+						value = 0
+					value = parseInt(value);
+					if (value > total) {
+						errorValue.show();
+						$('button[type="submit"]').prop('disabled', true);
+						sisa.val(total);
+						return
+					} else {
+						errorValue.hide();
+						$('button[type="submit"]').prop('disabled', false);
+					}
+					barang.item_stock = parseInt(total) - parseInt(value);
+					sisa.val(parseInt(total) - parseInt(value));
+				});
+
+			}
+			$("input[name='jenis_tujuan']").change(function() {
 				var val = $(this).val();
-				if(val == 'toko'){
+				if (val == 'toko') {
 					$("#region-tujuan-toko").show();
 					$("#region-tujuan-gudang").hide();
-				}else if(val == 'gudang'){
+				} else if (val == 'gudang') {
 					$("#region-tujuan-toko").hide();
 					$("#region-tujuan-gudang").show();
 				}
 			});
 			$("input[name='jenis_tujuan']:checked").trigger('change');
+			initInput();
 		});
 	</script>
 

@@ -22,7 +22,7 @@ class Item extends CI_Controller
 	{
 		$data = [
 			"title" => "Kelola Barang",
-			"items" => $this->Item_model->getAllItems()
+			"items" => $this->Item_model->getAllItems(['barang_gudang.gudang' => sessiondata('login', 'gudang')[0]['id']])
 		];
 
 		$this->load->view("items/v_index", $data);
@@ -135,8 +135,8 @@ class Item extends CI_Controller
 		if (file_exists('./assets/uploads/items/' . $item["item_image"]) && $item["item_image"]) {
 			unlink('./assets/uploads/items/' . $item["item_image"]);
 		}
-
-		$this->Item_model->deleteSelectedItem($id);
+		$gudang = sessiondata('login', 'gudang')[0]['id'];
+		$this->Item_model->deleteSelectedItem($id, $gudang);
 		$this->session->set_flashdata('message', ['message' => 'Dihapus', 'type' => 'success']);
 		redirect('item');
 	}

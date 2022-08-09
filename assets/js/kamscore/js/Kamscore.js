@@ -166,7 +166,7 @@ function toArray(object){
         object = {0: object};
 
     if(Object.keys(object).length == 0)
-        return;
+        return [];
 
     var temp = [];
     Object.keys(object).forEach((k, i) => {

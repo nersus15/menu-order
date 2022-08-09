@@ -48,13 +48,24 @@ class Auth extends CI_Controller
 					->join('wilayah w1', 'w1.id = users.wilayah')
 					->where('users.id_user', $userData['id_user'])->get()->row_array();
 
-				$gudang = $this->db->select('gudang.*, wilayah.nama as wilayah_gudang, wilayah.level as level_wilayah_gudang')
-					->from('users')
-					->join('admin_gudang', 'admin_gudang.admin = users.id_user')
-					->join('gudang', 'gudang.id = admin_gudang.gudang')
-					->join('wilayah', 'wilayah.id = gudang.wilayah')
-					->get()->result();
+				if($data['user_role'] == 'admin'){
+					$gudang = $this->db->select('gudang.*, wilayah.nama as wilayah_gudang, wilayah.level as level_wilayah_gudang')
+						->from('users')
+						->join('admin_gudang', 'admin_gudang.admin = users.id_user')
+						->join('gudang', 'gudang.id = admin_gudang.gudang')
+						->join('wilayah', 'wilayah.id = gudang.wilayah')
+						->where('admin_gudang.admin', $userData['id_user'])
+						->get()->result();
 					
+				}else{
+					$gudang = $this->db->select('gudang.*, wilayah.nama as wilayah_gudang, wilayah.level as level_wilayah_gudang')
+						->from('users')
+						->join('gudang', 'gudang.id = users.gudang')
+						->join('wilayah', 'wilayah.id = gudang.wilayah')
+						->where('users.id_user', $userData['id_user'])
+						->get()->result();
+						
+				}
 				$data['gudang'] = [];
 				if(!empty($gudang)){
 					foreach($gudang as $v)
