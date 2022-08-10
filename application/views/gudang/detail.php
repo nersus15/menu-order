@@ -4,7 +4,12 @@
 <!-- head -->
 <?php $this->load->view("components/main/_head"); ?>
 <!-- ./head -->
-
+<?php
+	$myGudang = [];
+	foreach(sessiondata('login', 'gudang') as $mgudang){
+		$myGudang[] = $mgudang['id'];
+	}
+?>
 <body>
 	<div id="app">
 		<div class="main-wrapper main-wrapper-1">
@@ -28,9 +33,11 @@
 								<li class="nav-item">
 									<a class="nav-link active" id="detail-gudang" data-toggle="tab" href="#detail-gudang-content" role="tab" aria-controls="detail-gudang" aria-selected="true">Detail Gudang</a>
 								</li>
+								<?php if(in_array($gudang[0]['id'], $myGudang)): ?>
 								<li class="nav-item">
 									<a class="nav-link" id="transaksi" data-toggle="tab" href="#transaksi-content" role="tab" aria-controls="transaksi" aria-selected="false">Transaksi</a>
 								</li>
+								<?php endif ?>
 								<li class="nav-item">
 									<a class="nav-link" id="items" data-toggle="tab" href="#items-content" role="tab" aria-controls="items" aria-selected="false">Barang</a>
 								</li>
@@ -40,9 +47,11 @@
 							<div class="tab-pane fade show active" id="detail-gudang-content" role="tabpanel" aria-labelledby="detail-gudang">
 								<?php $this->load->view('gudang/sub/detail', array('gudang' => $gudang[0])) ?>
 							</div>
+							<?php if(in_array($gudang[0]['id'], $myGudang)): ?>
 							<div class="tab-pane fade" id="transaksi-content" role="tabpanel" aria-labelledby="transaksi">
 								<?php $this->load->view('gudang/sub/transaksi', array('transaksi' => $transaksi)) ?>
 							</div>
+							<?php endif?>
 							<div class="tab-pane fade" id="items-content" role="tabpanel" aria-labelledby="items">
 								<?php $this->load->view('gudang/sub/items', array('items' => $gudang[0]['items'])) ?>
 							</div>

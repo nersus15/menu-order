@@ -30,7 +30,7 @@
 							<div class="card">
 								<div class="card-body">
 									<div class="table-responsive">
-										<h3>Anda Tidak Terdaftar digudang manapun</h3>
+										<h3><?= isset($sub) ? $sub : 'Anda Tidak Terdaftar digudang manapun' ?></h3>
 									</div>
 								</div>
 							</div>

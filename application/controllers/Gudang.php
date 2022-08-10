@@ -151,15 +151,20 @@ class Gudang extends CI_Controller
 		redirect('gudang');
 	}
 
-	function detail($gudang){
-		$idgudang = [$gudang];
-		$data = [
-            "title" => "Kelola Gudang Se " . kapitalize(sessiondata('login', 'wilnama')),
-			"transaksi" => $this->Gudang_model->getTransaksi($idgudang),
-			'gudang' => $this->Gudang_model->getBy(['gudang.id' => $gudang]),
-			'flash_data' => $this->session->flashdata('message')
-		];
-
-		$this->load->view("gudang/detail", $data);
+	function detail($idgudang){
+		$idsgudang = [$idgudang];
+		$gudang = $this->Gudang_model->getBy(['gudang.id' => $idgudang]);
+		if(empty($gudang)){
+			$this->load->view("errors/empty_gudang", ['title' => 'Detail Gudang', 'sub' => 'Data gudang dengan id ' . $idgudang . ' tidak ditemukan']);
+		}else{
+			$data = [
+				"title" => "Kelola Gudang Se " . kapitalize(sessiondata('login', 'wilnama')),
+				"transaksi" => $this->Gudang_model->getTransaksi($idsgudang),
+				'gudang' => $gudang,
+				'flash_data' => $this->session->flashdata('message')
+			];
+	
+			$this->load->view("gudang/detail", $data);
+		}
 	}
 }

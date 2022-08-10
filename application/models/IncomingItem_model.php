@@ -79,15 +79,7 @@ class Incomingitem_model extends CI_Model
 			'nota' => isset($incomingItemData['nota']) ? $incomingItemData['nota'] : null,
 			'keterangan' => isset($incomingItemData['keterangan']) ? $incomingItemData['keterangan'] : null
 		];
-
-		$new_price = ($incomingItemData['incoming_price'] + $incomingItemData['old_price'])/2;
-
 		$this->db->insert("transaksi", $insert);
-
-		$average = ((($incomingItemData['incoming_price'] - $incomingItemData['old_price'])/ ($incomingItemData['old_stok'] + $incomingItemData["incoming_item_qty"])) * $incomingItemData['incoming_item_qty']) + $incomingItemData['old_price'];
-
-		$this->db->where('id_item', $incomingItemData['id_items'])
-			->update('items', ['item_price' => round($average)]);
 	}
 
 	public function deleteSelectedIncomingItem($id)

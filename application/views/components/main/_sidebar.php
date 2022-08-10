@@ -20,8 +20,8 @@
 				<li class="<?= ($this->uri->segment(1) == 'admin') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("admin") ?>"><i class="fas fa-users"></i> <span>Kelola Admin </span></a></li>
 				<li class="<?= ($this->uri->segment(1) == 'staff') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("staff") ?>"><i class="fas fa-users"></i> <span>Kelola Staff</span></a></li>
 				<li class="menu-header">Laporan</li>
-				<li><a class="nav-link" href="<?= base_url("report/reporttransactions") ?>"><i class="fas fa-file"></i> <span>Rekap Transaksi</span></a></li>
-				<li><a class="nav-link" href="<?= base_url("report/stok") ?>"><i class="fas fa-file"></i> <span>Rekap Stok Barang</span></a></li>
+				<li class="<?= ($this->uri->segment(3) == 'transaksi') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("report/data/transaksi") ?>"><i class="fas fa-file"></i> <span>Rekap Transaksi</span></a></li>
+				<li class="<?= ($this->uri->segment(3) == 'barang') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("report/data/barang") ?>"><i class="fas fa-file"></i> <span>Rekap Stok Barang</span></a></li>
 				<li class="menu-header">Pengguna</li>
 				<li><a class="nav-link" href="<?= base_url("profile") ?>"><i class="fas fa-user-circle"></i> <span>Profil Saya</span></a></li>
 			</ul>
@@ -60,8 +60,8 @@
 					</ul>
 				</li>
 				<li class="menu-header">Laporan</li>
-				<li><a class="nav-link" href="<?= base_url("report/reporttransactions") ?>"><i class="fas fa-file"></i> <span>Rekap Transaksi</span></a></li>
-				<li><a class="nav-link" href="<?= base_url("report/stok") ?>"><i class="fas fa-file"></i> <span>Rekap Stok Barang</span></a></li>
+				<li class="<?= ($this->uri->segment(3) == 'transaksi') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("report/data/transaksi") ?>"><i class="fas fa-file"></i> <span>Rekap Transaksi</span></a></li>
+				<li class="<?= ($this->uri->segment(3) == 'barang') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("report/data/barang") ?>"><i class="fas fa-file"></i> <span>Rekap Stok Barang</span></a></li>
 				<li class="menu-header">Pengguna</li>
 				<li><a class="nav-link" href="<?= base_url("profile") ?>"><i class="fas fa-user-circle"></i> <span>Profil Saya</span></a></li>
 			</ul>

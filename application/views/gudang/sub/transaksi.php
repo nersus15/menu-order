@@ -39,9 +39,15 @@
                                 <?php if ($v['jenis'] == 'keluar') : ?>
                                     <td><?= !empty($v['tujuan']) && strlen($v['tujuan']) > 8 ? $v['tujuan'] : $v["namagudang_tujuan"] .  " - " . ($v['lvlwil_tujuan'] == '1' ? 'Prov. ' : ($v['lvlwil_tujuan'] == '3' ? 'Kec. ' : '-')) . kapitalize($v['namawil_tujuan']) ?></td>
                                 <?php else : ?>
-                                    <td>-</td>
+                                    <td><?= $v['verified'] == 1 ? 'Terverifikasi' : ($v['verified'] == 2 ? 'Pending - ' . $v['keterangan'] : '-') ?></td>
                                 <?php endif ?>
-                                <td><?= !empty($v['dihapus']) ? 'Dihapus Pada: ' . substr($v['dihapus'], 0, 10) . ' Oleh ' . $v['nama_penghapus'] : '-' ?></td>
+                                <td>
+                                    <?php if (empty($v['dihapus'])) : ?>
+                                        <?= $v['verified'] == 1 ? 'Terverifikasi' : ($v['verified'] == 2 ? 'Pending - ' . $v['keterangan'] : '-') ?>
+                                    <?php else : ?>
+                                        <?= ($v['verified'] == 1 ? 'Terverifikasi' : ($v['verified'] == 2 ? 'Pending - ' . $v['keterangan'] : '-')) . '<b>' .  'Dihapus Pada: ' . substr($v['dihapus'], 0, 10) . ' Oleh ' . $v['nama_penghapus'] . '</b>'  ?>
+                                    <?php endif ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

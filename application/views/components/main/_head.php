@@ -24,48 +24,47 @@
 	<link rel="stylesheet" href="<?= base_url("assets/css/style.css") ?>">
 	<link rel="stylesheet" href="<?= base_url("assets/css/components.css") ?>">
 	<script src="<?= base_url("assets/modules/jquery.min.js"); ?>"></script>
+	<script type="text/javascript" src="<?= base_url('assets/modules/daterangepicker/moment.min.js') ?>"></script>
+	<script type="text/javascript" src="<?= base_url('assets/modules/daterangepicker/daterangepicker.js') ?>"></script>
+	<link rel="stylesheet" type="text/css" href="<?= base_url('assets/modules/daterangepicker/daterangepicker.css')?>" />
+
 	<script src="<?= base_url("assets/js/kamscore/js/Kamscore.js"); ?>"></script>
 	<script src="<?= base_url("assets/js/kamscore/js/uihelper.js"); ?>"></script>
 
-	<?php 
-		if(isset($this->params))
-			extract($this->params);
-		if (isset($extra_js) && !empty($extra_js)) {
-			foreach ($extra_js as $js) {
-				if(!isset($js['attr']))
-					$js['attr'] = null;
-					
-				if ($js['pos'] == 'head' && $js['type'] == 'file')
-					echo '<script src="' . base_url('public/assets/' . $js['src']) . '"></script>';
-				elseif ($js['pos'] == 'head' && $js['type'] == 'cache')
-					echo '<script type="application/javascript" src="' . base_url('public/assets/' . $js['src']) . '"></script>';
-				elseif ($js['pos'] == 'head' && $js['type'] == 'inline') {
-					echo '<script>' . $js['script'] . '</script>';
-				}
-				elseif($js['pos'] == 'head' && $js['type'] == 'cdn')
-					echo '<script src="' . $js['src'] . '"'. $js['attr'] .'></script>';
-			}
+	<?php
+	if (isset($this->params))
+		extract($this->params);
+	if (isset($extra_js) && !empty($extra_js)) {
+		foreach ($extra_js as $js) {
+			if (!isset($js['attr']))
+				$js['attr'] = null;
+
+			if ($js['pos'] == 'head' && $js['type'] == 'file')
+				echo '<script src="' . base_url('public/assets/' . $js['src']) . '"></script>';
+			elseif ($js['pos'] == 'head' && $js['type'] == 'cache')
+				echo '<script type="application/javascript" src="' . base_url('public/assets/' . $js['src']) . '"></script>';
+			elseif ($js['pos'] == 'head' && $js['type'] == 'inline') {
+				echo '<script>' . $js['script'] . '</script>';
+			} elseif ($js['pos'] == 'head' && $js['type'] == 'cdn')
+				echo '<script src="' . $js['src'] . '"' . $js['attr'] . '></script>';
 		}
+	}
 
-		if (isset($extra_css) && !empty($extra_css)) {
-			foreach ($extra_css as $css) {
-				if(!isset($css['attr']))
-					$css['attr'] = null;
+	if (isset($extra_css) && !empty($extra_css)) {
+		foreach ($extra_css as $css) {
+			if (!isset($css['attr']))
+				$css['attr'] = null;
 
-				if ($css['pos'] == 'head' && $css['type'] == 'file')
-					echo '<link rel="stylesheet" href="' . base_url('public/assets/' . $css['src']) . '"></link>';
-				elseif ($css['pos'] == 'head' && $css['type'] == 'inline') {
-					echo '<style>' . $css['style'] . '</style>';
-				}
-				elseif($css['pos'] == 'head' && $css['type'] == 'cdn')
-					echo '<link rel="stylesheet" href="' .  $css['src'] . '" '. $css['attr'] .'></link>';
-
-			}
+			if ($css['pos'] == 'head' && $css['type'] == 'file')
+				echo '<link rel="stylesheet" href="' . base_url('public/assets/' . $css['src']) . '"></link>';
+			elseif ($css['pos'] == 'head' && $css['type'] == 'inline') {
+				echo '<style>' . $css['style'] . '</style>';
+			} elseif ($css['pos'] == 'head' && $css['type'] == 'cdn')
+				echo '<link rel="stylesheet" href="' .  $css['src'] . '" ' . $css['attr'] . '></link>';
 		}
+	}
 	?>
 	<script>
-		var path = "<?=  base_url() ?>";
+		var path = "<?= base_url() ?>";
 	</script>
 </head>
-
-

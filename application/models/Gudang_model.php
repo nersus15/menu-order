@@ -216,7 +216,7 @@ class Gudang_model extends CI_Model
 		return $data;
 	}
 
-    function getTransaksi($gudang = null){
+    function getTransaksi($gudang = null, $where = null){
         $query = $this->db->select("items.*, users.user_name as nama_pencatat, transaksi.*, gudang_tujuan.nama as namagudang_tujuan, wilayah_tujuan.nama namawil_tujuan, wilayah_tujuan.level as lvlwil_tujuan, gudang_asal.nama as namagudang_asal, wilayah_asal.nama namawil_asal, wilayah_asal.level as lvlwil_asal")
 			->from("transaksi")
 			->join("users", "users.id_user = transaksi.pencatat")
@@ -231,6 +231,52 @@ class Gudang_model extends CI_Model
 		if(!empty($gudang)){
 			$query->where_in('transaksi.gudang', $gudang);
 		}
+        if(!empty($where)){
+            foreach($where as $k => $v){
+				if(is_numeric($k)){
+					$query->where($v, null, false);
+				}else{
+					$query->where($k, $v);
+				}
+			}
+        }
 		return $query->get()->result_array();
+    }
+
+    function report($jenis = 'transaksi', $sgudang = 'semua', $kelompok = null, $filter = []){
+        $gudang = [];
+        $tmp = $this->getMyGudang();
+        if(!empty($kelompok)){
+            $filter['jenis'] = $kelompok;
+        }
+        if(!empty($tmp)){
+            $gudang = $tmp;
+            foreach($tmp as $k => $v){
+                if(!empty($sgudang) && $sgudang != 'semua'){
+                    if ($v['id'] != $sgudang) continue;
+                }
+                if($jenis == 'transaksi')
+                    $gudang[$k]['transaksi'] = $this->getTransaksi($v['id'], $filter);
+                elseif($jenis == 'barang'){
+                    $q = $this->db->select('*, barang_gudang.gudang as idgudang')
+                        ->where('barang_gudang.gudang', $v['id'])
+                        ->join('barang_gudang', 'barang_gudang.barang = items.id_item')
+                        ->join('categories', 'categories.id_category = items.id_category')
+                        ->join('units', 'units.id_unit = items.id_unit');
+                    if(!empty($filter)){
+                        foreach($filter as $kolom => $nilai){
+                            if(is_numeric($kolom)){
+                                $q->where($nilai, null, false);
+                            }else{
+                                $q->where($kolom, $nilai);
+                            }
+                        }
+                    }
+                    $gudang[$k]['items'] = $q->get('items')->result_array();
+                }
+            }
+        }
+
+        return $gudang;
     }
 }
