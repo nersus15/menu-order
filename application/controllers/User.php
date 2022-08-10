@@ -26,10 +26,11 @@ class User extends CI_Controller
 	{
 		$this->load->model('Gudang_model');
 		$role = !empty($role) ? sandi($role) : $role;
+		$wilayah = $this->User_model->gethirarkiWilayah(['level' => 3]);
 		$data = [
 			"title" => !in_array($role, ['admin', 'staff']) ? "Tambah User Baru"  : "Tambah User ". kapitalize($role) ." Baru",
 			'gudang' => $this->Gudang_model->getbyuser(),
-			'wilayah' => $this->User_model->gethirarkiWilayah(),
+			'wilayah' => $wilayah,
 			'role' => $role
 		];
 		$this->form_validation->set_rules('user_name', 'Nama', 'required');
@@ -109,7 +110,6 @@ class User extends CI_Controller
 			$this->load->view("users/v_update", $data);
 		} else {
 			$post = $this->input->post();
-			$this->db->where('id_user', $id)->update('users', ['wilayah' => $post['wilayah']]);
 			if($role == 'admin'){
 				$this->db->where('admin', $id)->delete('admin_gudang');
 				if(!empty($post['gudang'])){

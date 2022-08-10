@@ -16,8 +16,16 @@
 					<a class="nav-link" href="<?= base_url('dashboard'); ?>"><i class="fas fa-fire"></i> <span>Dashboard</span></a>
 				</li>
 				<li class="menu-header">Master Data</li>
+				<li class="dropdown <?= in_array($this->uri->segment(1), ['item', 'category', 'unit'])? 'active' : '' ?>">
+					<a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-box-open"></i> <span>Kelola Barang</span></a>
+					<ul class="dropdown-menu">
+						<li class="<?= ($this->uri->segment(1) == 'item') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("item") ?>">Item</a></li>
+						<li class="<?= ($this->uri->segment(1) == 'category') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("category") ?>">Kategori</a></li>
+						<li class="<?= ($this->uri->segment(1) == 'unit') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("unit") ?>">Satuan</a></li>
+					</ul>
+				</li>
 				<li class="<?= ($this->uri->segment(1) == 'gudang') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("gudang") ?>"><i class="fas fa-warehouse"></i> <span>Kelola Gudang</span></a></li>
-				<li class="<?= ($this->uri->segment(1) == 'admin') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("admin") ?>"><i class="fas fa-users"></i> <span>Kelola Admin </span></a></li>
+				<!-- <li class="<?= ($this->uri->segment(1) == 'admin') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("admin") ?>"><i class="fas fa-users"></i> <span>Kelola Admin </span></a></li> -->
 				<li class="<?= ($this->uri->segment(1) == 'staff') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("staff") ?>"><i class="fas fa-users"></i> <span>Kelola Staff</span></a></li>
 				<li class="menu-header">Laporan</li>
 				<li class="<?= ($this->uri->segment(3) == 'transaksi') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("report/data/transaksi") ?>"><i class="fas fa-file"></i> <span>Rekap Transaksi</span></a></li>
@@ -44,14 +52,7 @@
 					<a class="nav-link" href="<?= base_url('dashboard'); ?>"><i class="fas fa-fire"></i> <span>Dashboard</span></a>
 				</li>
 				<li class="menu-header">Master Data</li>
-				<li class="dropdown <?= in_array($this->uri->segment(1), ['item', 'category', 'unit'])? 'active' : '' ?>">
-					<a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-box-open"></i> <span>Kelola Barang</span></a>
-					<ul class="dropdown-menu">
-						<li class="<?= ($this->uri->segment(1) == 'item') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("item") ?>">Item</a></li>
-						<li class="<?= ($this->uri->segment(1) == 'category') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("category") ?>">Kategori</a></li>
-						<li class="<?= ($this->uri->segment(1) == 'unit') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("unit") ?>">Satuan</a></li>
-					</ul>
-				</li>
+				<li  class="<?= ($this->uri->segment(1) == 'item') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("item") ?>"><i class="fas fa-box-open"></i> <span>Daftar Barang</span></a></li>
 				<li class="dropdown <?= in_array($this->uri->segment(1), ['incomingitem', 'outcomingitem'])? 'active' : '' ?>">
 					<a href="#" class="nav-link has-dropdown"><i class="fas fa-th"></i> <span>Kelola Transaksi</span></a>
 					<ul class="dropdown-menu">

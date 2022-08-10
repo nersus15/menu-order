@@ -20,17 +20,22 @@ class Item extends CI_Controller
 
 	public function index()
 	{
-		if(empty(sessiondata('login', 'gudang'))){
-			$this->load->view('errors/empty_gudang', ['title'=> 'Kelola Barang']);
-		}else{
+		$this->load->model('Gudang_model');
+		if (is_login('staff') && empty(sessiondata('login', 'gudang'))) {
+			$this->load->view('errors/empty_gudang', ['title' => 'Kelola Barang']);
+		} else {
+			$filter = [];
+			if (is_login('staff')) {
+				$filter['barang_gudang.gudang'] = sessiondata('login', 'gudang')[0]['id'];
+			}
 			$data = [
 				"title" => "Kelola Barang",
-				"items" => $this->Item_model->getAllItems(['barang_gudang.gudang' => sessiondata('login', 'gudang')[0]['id']])
+				"items" => $this->Item_model->getAllItems($filter),
+				'gudang' => $this->Gudang_model->getBy(null, false)
 			];
 
 			$this->load->view("items/v_index", $data);
 		}
-		
 	}
 
 	public function create()
@@ -49,9 +54,9 @@ class Item extends CI_Controller
 		} else {
 			$this->load->model('Gudang_model');
 			$gudang = $this->Gudang_model->getMyGudang();
-			if(empty($gudang)){
-				$this->load->view('errors/empty_gudang', ['title'=> 'Kelola Barang']);
-			}else{
+			if (empty($gudang)) {
+				$this->load->view('errors/empty_gudang', ['title' => 'Kelola Barang']);
+			} else {
 				$itemImage = "default.jpg";
 				if (!empty($_FILES["item_image"]['tmp_name'])) {
 					$config = [
@@ -62,7 +67,7 @@ class Item extends CI_Controller
 					$this->load->library("upload", $config);
 					if ($this->upload->do_upload("item_image")) {
 						$itemImage = $this->upload->data("file_name");
-					}else{
+					} else {
 						$err = array('error' => $this->upload->display_errors());
 						$err = join(' ', $err);
 					}
@@ -73,17 +78,14 @@ class Item extends CI_Controller
 					"item_code" => $this->input->post("item_code"),
 					"item_name" => $this->input->post("item_name"),
 					"item_image" => $itemImage,
-					"item_stock" => $this->input->post("item_stock"),
 					"item_price" => $this->input->post("item_price"),
-					"item_description" => $this->input->post("item_description"),
-					'gudang' => $gudang[0]['id']
+					"item_description" => $this->input->post("item_description")
 				];
-	
+
 				$this->Item_model->insertNewItem($itemData);
 				$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
 				redirect('item');
 			}
-			
 		}
 	}
 
@@ -156,19 +158,85 @@ class Item extends CI_Controller
 		$itemId = encode_php_tags($id);
 		$query = $this->Item_model->cekItemStock($itemId);
 		// output_json($query); Ntah dapat function darimana, jadi ganti dulu
-		
+
 		$this->output
 			->set_content_type('application/json')
 			->set_output(json_encode($query));
 	}
 
+	function kirim()
+	{
+		$post = $this->input->post();
+		$this->load->model('IncomingItem_model');
+		$this->load->model('Gudang_model');
+		$warehouse = $this->Gudang_model->warehouse();
+		$notifikasi = [];
+		foreach ($post['gudang'] as $gudang) {
+			// Notifikasi
+			$pesan = 'Gudang Wrehouse - Mataram Mengirimi anda barang sebagai berikut <ol>';
+			$staffGudang = $this->db->where('gudang', $gudang)->select('id_user')->get('users')->result();
+			foreach ($post['barang'] as $k => $v) {
+				$ada = $this->cek_sudah_ada($gudang, $v);
+				if (empty($ada)) {
+					$this->db->insert('barang_gudang', array(
+						'gudang' => $gudang,
+						'barang' => $v,
+						'item_stock' => $post['jumlah'][$k],
+						'ditambah' => waktu()
+					));
+				} else {
+					$this->db->where('id', $ada['id'])->update('barang_gudang', ['item_stock' => $ada['item_stock'] + $post['jumlah'][$k]]);
+				}
+
+				$newTransaksi = [
+					"id_items" => $v,
+					"gudang_asal" => $warehouse['id'],
+					'incoming_item_code' => $this->IncomingItem_model->makeIncomingItemCode(),
+					"jenis" => 'masuk',
+					'gudang' => $gudang,
+					'pencatat' => sessiondata('login', 'id_user'),
+					'nota' => null,
+					'incoming_item_qty' => $post['jumlah'][$k],
+					'verified' => 1
+				];
+				$this->IncomingItem_model->insertNewIncomingItem($newTransaksi);
+
+				// Notifikasi
+				$namaBarang = $this->db->where('id_item', $v)
+					->join('units', 'units.id_unit = items.id_unit')
+					->get('items')->row();
+					;
+				$pesan .= "<li> " . $namaBarang->item_name . " - " . $post['jumlah'][$k] . ' ' . $namaBarang->unit_name;
+			}
+			foreach ($staffGudang as $usr) {
+				$this->db->insert('notifikasi', array(
+					'id' => random(8),
+					'jenis' => 'personal',
+					'user' => $usr->id_user,
+					'pesan' => $pesan,
+					'link' => '#'
+				));
+			}
+		}
+
+		$this->session->set_flashdata('message', ['message' => 'Berhasil', 'type' => 'success']);
+		redirect('item');
+	}
+
+	private function cek_sudah_ada($gudang, $barang)
+	{
+		$barang = $this->db->where('gudang', $gudang)
+			->where('barang', $barang)
+			->get('barang_gudang')->row_array();
+
+		return $barang;
+	}
 	private function _validateFormRequest()
 	{
 		$this->form_validation->set_rules('id_category', 'Kategori', 'required');
 		$this->form_validation->set_rules('id_unit', 'Satuan', 'required');
 		$this->form_validation->set_rules('item_code', 'Kode Barang', 'required');
 		$this->form_validation->set_rules('item_name', 'Nama Barang', 'required');
-		$this->form_validation->set_rules('item_stock', 'Stok Barang', 'required');
 		$this->form_validation->Set_rules('item_price', 'Harga Barang', 'required');
 	}
 }

@@ -78,10 +78,10 @@
 														</div>
 													</div>
 												</div>
-												<div class="form-group">
+												<!-- <div class="form-group">
 													<label for="item_stock">Stok Barang</label>
 													<input type="number" class="form-control <?= form_error('item_stock') ? 'is-invalid' : ''; ?>" name="item_stock" id="item_stock" placeholder="Stok Barang" value="<?= $item["item_stock"] ?>">
-												</div>
+												</div> -->
 												<?= form_error('item_stock', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 												<div class="form-group">
 													<label for="item_price">Harga Barang</label>

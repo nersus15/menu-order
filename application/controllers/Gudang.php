@@ -16,21 +16,21 @@ class Gudang extends CI_Controller
         $data = [
             "title" => "Kelola Gudang Se " . kapitalize(sessiondata('login', 'wilnama')),
 			"items" => $this->Gudang_model->getbyuser(),
-			'flash_data' => $this->session->flashdata('message')
+			'flash_data' => $this->session->flashdata('message'),
 		];
 
 		$this->load->view("gudang/v_index", $data);
 	}
 	function create(){
 		$this->load->model('User_model');
-		$wilayah = $this->User_model->gethirarkiWilayah();
+		$wilayah = $this->User_model->gethirarkiWilayah(['level' => 3]);
 		$admin = $this->User_model->userhirarkiby(['user_role' => 'admin']);
 		$staff = $this->User_model->userhirarkiby(['user_role' => 'staff']);
 		$data = [
             "title" => "Kelola Gudang Se " . kapitalize(sessiondata('login', 'wilnama')),
 			"items" => $this->Gudang_model->getbyuser(),
 			'wilayah' => $wilayah,
-			'admin' => $admin,
+			// 'admin' => $admin,
 			'staff' => $staff,
 			'flash_data' => $this->session->flashdata('message')
 		];
@@ -99,7 +99,7 @@ class Gudang extends CI_Controller
             "title" => "Kelola Gudang Se " . kapitalize(sessiondata('login', 'wilnama')),
 			"items" => $this->Gudang_model->getbyuser(),
 			'wilayah' => $wilayah,
-			'admin' => $admin,
+			// 'admin' => $admin,
 			'gudang' => $gudang,
 			'sstaff' => $sstaff,
 			'sadmin' => $sadmin,
@@ -167,4 +167,6 @@ class Gudang extends CI_Controller
 			$this->load->view("gudang/detail", $data);
 		}
 	}
+
+	
 }

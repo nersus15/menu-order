@@ -101,11 +101,10 @@ class Outcomingitem extends CI_Controller
 					foreach ($post['id_items'] as $key => $value) {
 						$namaBarang = $this->db->where('id_item', $value)
 							->join('units', 'units.id_unit = items.id_unit')
-							->join('barang_gudang', 'barang_gudang.barang = items.id_item')
-							->where('gudang',  $gudangUser[0]['id'])->get('items')->row();
+							->get('items')->row();
 						$pesan .= "<li> ". $namaBarang->item_name . " - " .  $post["outcoming_item_qty"][$key] . ' ' . $namaBarang->unit_name;
 					 }
-	
+					 $pesan .= '</ol>';
 					foreach($staffGudang as $usr){
 						$this->db->insert('notifikasi', array(
 							'id' => random(8),

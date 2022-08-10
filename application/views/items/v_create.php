@@ -61,11 +61,11 @@
 													<label for="item_image">Gambar Barang</label>
 													<input type="file" class="form-control" name="item_image" id="item_image">
 												</div>
-												<div class="form-group">
+												<!-- <div class="form-group">
 													<label for="item_stock">Stok Barang</label>
 													<input type="number" class="form-control <?= form_error('item_stock') ? 'is-invalid' : ''; ?>" name="item_stock" id="item_stock" placeholder="Stok Barang">
 													<?= form_error('item_stock', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
-												</div>
+												</div> -->
 												<div class="form-group">
 													<label for="item_price">Biaya Barang</label>
 													<input type="number" class="form-control <?= form_error('item_price') ? 'is-invalid' : ''; ?>" name="item_price" id="item_price" placeholder="Harga Barang">

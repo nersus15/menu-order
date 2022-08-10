@@ -18,10 +18,13 @@ class Report extends CI_Controller
 		if(!in_array($jenis, ['transaksi', 'barang'])){
 			show_error("Tidak Ada Data ". ucfirst($jenis) . " Yang Bisa Di Export", 403, 'Ilegal Akses');
 		}
+		$this->load->model('Gudang_model');
 		$this->load->view('reports/v_export', [
 			'title' => 'Export Data ' . kapitalize($jenis),
 			'jenis' => $jenis,
-			'admin' => sessiondata('login', 'user_role') == 'admin'
+			'admin' => sessiondata('login', 'user_role') == 'admin',
+			'listGudang' => $this->Gudang_model->getBy(null, false)
+
 		]);
 	}
 

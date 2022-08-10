@@ -55,7 +55,7 @@
                                                 <label for="">Gudang</label>
                                                 <select name="" id="sgudang" class="form-control">
                                                     <option value="semua" selected>Semua Gudang</option>
-                                                    <?php foreach(sessiondata('login', 'gudang') as $gudang):?>
+                                                    <?php foreach($listGudang as $gudang):?>
                                                         <?php
                                                             $namaGudang = strpos(strtolower($gudang['nama']), 'gudang') === false ? 'Gudang ' . $gudang['nama'] : $gudang['nama'];
                                                             if ($gudang['level_wilayah_gudang'] == '1')

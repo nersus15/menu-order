@@ -46,7 +46,7 @@
 													<th>Nama Gudang</th>
 													<th>Alamat Gudang</th>
 													<th>Wilayah</th>
-													<th>Admin</th>
+													<!-- <th>Admin</th> -->
 													<th>Staff</th>
 
 													<th>Aksi</th>
@@ -61,13 +61,7 @@
 														<td><?= $item->nama ?></td>
 														<td><?= $item->alamat ?></td>
 														<td><?= ($item->level_wilayah == '1' ? 'Prov. ' :( $item->level_wilayah == '3' ?  'Kec. ' : '') ) . kapitalize($item->wilayah_gudang) ?></td>
-                                                        <td>
-                                                            <ul>
-                                                                <?php foreach($item->admin as $admin): ?>
-                                                                    <li><?= $admin->user_name ?></li>
-                                                                <?php endforeach ?>
-                                                            </ul>
-                                                        </td>
+                                                       
                                                         <td>
                                                             <ul>
                                                                 <?php foreach($item->staff as $staff): ?>

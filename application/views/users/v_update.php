@@ -32,16 +32,6 @@
 											<?php else: ?>
 											<form action="<?= base_url("user/update/". $user['id_user'] ."/" . sandi($role)) ?>" method="post" enctype="multipart/form-data">
 												<div class="form-group">
-													<label for="wilayah">Wilayah Kerja</label>
-													<select name="wilayah" id="wilayah" class="form-control select2 <?= form_error('wilayah') ? 'is-invalid' : ''; ?>">
-														<option value="" disabled>--Wilayah--</option>
-														<?php foreach ($wilayah as $v) : ?>
-															<option <?= $v['id'] == $user['wilayah'] ? 'selected' : null ?> data-level="<?= $v['level']?>" value="<?= $v["id"] ?>"><?= ($v['level'] == '1' ? 'Prov. ' :( $v['level'] == '3' ?  'Kec. ' : '') ).  kapitalize($v["nama"]) ?></option>
-														<?php endforeach; ?>
-													</select>
-													<?= form_error('wilayah', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
-												</div>
-												<div class="form-group">
 													<label for="gudang">Gudang</label>
 													<select <?= $role == 'admin' ? 'multiple':null ?>  name="gudang[]" id="gudang" class="form-control select2 <?= form_error('gudang') ? 'is-invalid' : ''; ?>">
 													<?php if($role == 'staff'): ?>	

@@ -12,15 +12,24 @@ class Dashboard extends CI_Controller
 
 	public function index()
 	{
-		$data = [
-			"title" => "Dashboard",
-			"total_admins" => $this->db->get("users")->num_rows(),
-			// "total_suppliers" => $this->db->get("suppliers")->num_rows(),
-			// "total_customers" => $this->db->get("customers")->num_rows(),
-			"total_items" => $this->db->get("items")->num_rows(),
-		];
 		
-
-		$this->load->view("v_dashboard", $data);
+		
+		if(is_login('admin')){
+			$data = [
+				"title" => "Dashboard",
+				"staff" => $this->db->where('user_role', 'staff')->get("users")->num_rows(),
+				"items" => $this->db->get("items")->num_rows(),
+				'gudang' => $this->db->where('nama != "Warehouse"')->get('gudang')->num_rows()
+			];
+			$this->load->view("admin/v_dashboard", $data);
+		}elseif(is_login('staff')){
+			$data = [
+				"title" => "Dashboard",
+				"staff" => $this->db->where('user_role', 'staff')->where('gudang', sessiondata('login', 'gudang')[0]['id'])->get("users")->num_rows(),
+				"items" => $this->db->where('gudang', sessiondata('login', 'gudang')[0]['id'])->get("barang_gudang")->num_rows(),
+				"transaksi" => $this->db->where('gudang', sessiondata('login', 'gudang')[0]['id'])->get("transaksi")->result_array(),
+			];
+			$this->load->view("v_dashboard", $data);
+		}
 	}
 }

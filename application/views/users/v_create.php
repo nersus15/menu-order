@@ -47,7 +47,7 @@
 													<?= form_error('user_phone', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 												</div>
 												<div class="form-group">
-													<label for="user_address">Alamat User</label>
+													<label for="user_address">Alamat Lengkap</label>
 													<textarea name="user_address" id="user_address" rows="3" class="form-control <?= form_error('user_address') ? 'is-invalid' : ''; ?>"></textarea>
 													<?= form_error('user_address', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 												</div>
@@ -56,7 +56,7 @@
 													<input type="file" class="form-control" name="user_avatar" id="user_avatar">
 												</div>
 												<div class="form-group">
-													<label for="wilayah">Wilayah Kerja</label>
+													<label for="wilayah">Alamat</label>
 													<select name="wilayah" id="wilayah" class="form-control select2 <?= form_error('wilayah') ? 'is-invalid' : ''; ?>">
 														<option value="" disabled selected>--Wilayah--</option>
 														<?php foreach ($wilayah as $v) : ?>

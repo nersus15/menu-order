@@ -7,9 +7,10 @@ class Item_model extends CI_Model
 		$query = $this->db->select("*")
 			->from("items")
 			->join("categories", "categories.id_category = items.id_category")
-			->join("units", "units.id_unit = items.id_unit")
-			->join('barang_gudang', 'barang_gudang.barang = items.id_item');
-
+			->join("units", "units.id_unit = items.id_unit");
+		if(is_login('staff')){
+			$query->join('barang_gudang', 'barang_gudang.barang = items.id_item');
+		}
 		if(!empty($filters)){
 			if(!empty($filters)){
 				foreach($filters as $k => $v){
@@ -42,8 +43,6 @@ class Item_model extends CI_Model
 		$stock = $itemData['item_stock'];
 		unset($itemData['gudang'], $itemData['item_stock']);
 		$this->db->insert("items", $itemData);
-		$insert_id = $this->db->insert_id();
-		$this->db->insert('barang_gudang', ['barang' => $insert_id, 'gudang' => $gudang, 'item_stock' => $stock]);
 	
 	}
 

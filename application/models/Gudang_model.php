@@ -18,19 +18,12 @@ class Gudang_model extends CI_Model
         $query= $this->db->select('gudang.*, wilayah.level as level_wilayah, wilayah.nama as wilayah_gudang')
                 ->from('gudang')
                 ->join('wilayah', 'wilayah.id = gudang.wilayah')
+                ->where('gudang.nama != "Warehouse"', null)
                 ->like('gudang.wilayah', $prefwil, 'after');
         $gudang = $query->get()->result();
         $tmp = $gudang;
 
         foreach($gudang as $k => $v){
-            $admin = $this->db->select('users.*')
-                ->from('users')
-                ->join('admin_gudang', 'admin_gudang.admin = users.id_user')
-                ->where('admin_gudang.gudang', $v->id)
-                ->get()->result();
-
-            $tmp[$k]->admin = $admin;
-
             $staff = $this->db->select('users.*')
                 ->from('users')
                 ->where('users.user_role', 'staff')
@@ -52,21 +45,19 @@ class Gudang_model extends CI_Model
             $gudang = $this->db->select('gudang.*, wilayah.level as level_wilayah_gudang, wilayah.nama as nama_wilayah_gudang')
                 ->join('gudang', 'gudang.id = users.gudang')
                 ->join('wilayah', 'wilayah.id = gudang.wilayah')
+                ->where('gudang.nama != "Warehouse"', null)
                 ->where('id_user', $userid)
                 ->get('users')->result_array();
         }else{
             $gudang = $this->db->select('gudang.*, wilayah.level as level_wilayah_gudang, wilayah.nama as nama_wilayah_gudang')
-                ->join('admin_gudang', 'admin_gudang.admin = users.id_user')
-                ->join('gudang', 'gudang.id = admin_gudang.gudang')
-                ->join('wilayah', 'wilayah.id = gudang.wilayah')
-                ->where('id_user', $userid)
-                ->get('users')->result_array();
+                ->join('wilayah', 'wilayah.id = gudang.wilayah')->where('gudang.nama != "Warehouse"', null)
+                ->get('gudang')->result_array();
         }
         return $gudang;
     }
-    function getBy($where = null){
+    function getBy($where = null, $infoTambahan = true){
         $q = $this->db->select('gudang.*, wilayah.level as level_wilayah_gudang, wilayah.nama as nama_wilayah_gudang')
-            ->join('wilayah', 'wilayah.id = gudang.wilayah');
+            ->join('wilayah', 'wilayah.id = gudang.wilayah')->where('gudang.nama != "Warehouse"', null);
         if(!empty($where)){
             foreach($where as $k => $v){
 				if(is_numeric($k)){
@@ -84,25 +75,22 @@ class Gudang_model extends CI_Model
             return !empty(sessiondata('login', 'gudang')) ? $arr['id'] != sessiondata('login', 'gudang')[0]['id'] : true;
         });
         $tmp = $gudang;
-        foreach($gudang as $k => $v){
-            $staff = $this->db->select('users.*, wilayah.nama as wilayah_kerja_staff, wilayah.level as level_wilayah_staff')
-                ->where('gudang', $v['id'])
-                ->join('wilayah', 'wilayah.id = users.wilayah')
-                ->get('users')->result_array();
-            $admin = $this->db->select('users.*, wilayah.nama as wilayah_kerja_admin, wilayah.level as level_wilayah_admin')
-                 ->where('admin_gudang.gudang', $v['id'])
-                 ->join('admin_gudang', 'admin_gudang.admin = users.id_user')
-                 ->join('wilayah', 'wilayah.id = users.wilayah')
-                 ->get('users')->result_array();
-            $items = $this->db->select('*')
-                ->where('barang_gudang.gudang', $v['id'])
-                ->join('barang_gudang', 'barang_gudang.barang = items.id_item')
-                ->join('categories', 'categories.id_category = items.id_category')
-                ->join('units', 'units.id_unit = items.id_unit')
-                ->get('items')->result_array();
-            $tmp[$k]['staff'] = $staff;
-            $tmp[$k]['admin'] = $admin;
-            $tmp[$k]['items'] = $items;
+        if($infoTambahan){
+            foreach($gudang as $k => $v){
+                $staff = $this->db->select('users.*, wilayah.nama as wilayah_kerja_staff, wilayah.level as level_wilayah_staff')
+                    ->where('gudang', $v['id'])
+                    ->join('wilayah', 'wilayah.id = users.wilayah')
+                    ->get('users')->result_array();
+                $items = $this->db->select('*')
+                    ->where('barang_gudang.gudang', $v['id'])
+                    ->join('barang_gudang', 'barang_gudang.barang = items.id_item')
+                    ->join('categories', 'categories.id_category = items.id_category')
+                    ->join('units', 'units.id_unit = items.id_unit')
+                    ->get('items')->result_array();
+                $tmp[$k]['staff'] = $staff;
+                $tmp[$k]['admin'] = $admin;
+                $tmp[$k]['items'] = $items;
+            }
         }
         
         
@@ -127,19 +115,6 @@ class Gudang_model extends CI_Model
             }else{
                 $this->db->where('users.gudang', $idgudang)->update('users', ['gudang' => null]);
             }
-            if(isset($admin) && !empty($admin)){
-                $this->db->where('admin_gudang.gudang', $idgudang)->delete('admin_gudang');
-                $tmp = [];
-                foreach($admin as $id){
-                    $tmp[] = array(
-                        'admin' => $id,
-                        'gudang' => $idgudang
-                    );
-                }
-                $this->insertAdmin($tmp);
-            }else{
-                $this->db->where('admin_gudang.gudang', $idgudang)->delete('admin_gudang');
-            }
 
         } catch (\Throwable $th) {
             $this->session->set_flashdata('message', ['message' => $th::getMessage(), 'type' => 'danger']);
@@ -147,21 +122,6 @@ class Gudang_model extends CI_Model
         }
     }
 
-    function insertAdmin($data, $gudang = null, $redirect = null){
-        try {
-            if(!empty($gudang)){
-                foreach($data as $d){
-                    $this->db->where('gudang', $gudang)->update('admin_gudang', $d);
-                }
-            }else{
-                $this->db->insert_batch('admin_gudang', $data);
-            }
-        } catch (\Throwable $th) {
-            $this->session->set_flashdata('message', ['message' => $th::getMessage(), 'type' => 'danger']);
-            if(!empty($redirect))
-                redirect($redirect);
-        }
-    }
     function insertStaff($data, $gudang){
         try {
             $this->db->where_in('id_user', $data)->update('users', array('gudang' => $gudang));
@@ -279,4 +239,7 @@ class Gudang_model extends CI_Model
 
         return $gudang;
     }
+    function warehouse(){
+		return $this->db->where('nama', 'Warehouse')->where('wilayah', '52.00.00.0000')->get('gudang')->row_array();
+	}
 }

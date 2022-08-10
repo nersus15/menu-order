@@ -49,14 +49,7 @@ class Auth extends CI_Controller
 					->where('users.id_user', $userData['id_user'])->get()->row_array();
 
 				if($data['user_role'] == 'admin'){
-					$gudang = $this->db->select('gudang.*, wilayah.nama as wilayah_gudang, wilayah.level as level_wilayah_gudang')
-						->from('users')
-						->join('admin_gudang', 'admin_gudang.admin = users.id_user')
-						->join('gudang', 'gudang.id = admin_gudang.gudang')
-						->join('wilayah', 'wilayah.id = gudang.wilayah')
-						->where('admin_gudang.admin', $userData['id_user'])
-						->get()->result();
-					
+				
 				}else{
 					$gudang = $this->db->select('gudang.*, wilayah.nama as wilayah_gudang, wilayah.level as level_wilayah_gudang')
 						->from('users')
@@ -90,13 +83,7 @@ class Auth extends CI_Controller
 
 	public function logout()
 	{
-		$this->session->unset_userdata("id_user");
-		$this->session->unset_userdata("user_name");
-		$this->session->unset_userdata("user_email");
-		$this->session->unset_userdata('user_phone');
-		$this->session->unset_userdata('user_address');
-		$this->session->unset_userdata('user_avatar');
-		$this->session->unset_userdata('user_role');
+		$this->session->unset_userdata("login");
 		// $this->session->set_flashdata('message', '<div class="alert alert-success">Kamu berhasil logout</div>');
 		$this->session->set_flashdata('message', ['message' => 'Kamu berhasil logout', 'type' => 'success']); 
 		

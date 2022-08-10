@@ -58,7 +58,7 @@
             $namaGudang .= ' - Kec. ' . $g['nama_wilayah_gudang'];
 
         ?>
-        <h1><?= "Laporan Transaksi Keluar <br>" . kapitalize($namaGudang) . '</br>' . (!empty($tgl) ? $tgl[0] . ' sd ' . $tgl[1] : null) ?></h1>
+        <h1><?= "Laporan Transaksi Keluar <br>" . kapitalize($namaGudang) . '<br>' . (!empty($tgl) ? $tgl[0] . ' sd ' . $tgl[1] : null) ?></h1>
         <br>
         <hr>
         <br>

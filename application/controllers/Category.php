@@ -68,8 +68,7 @@ class Category extends CI_Controller
 			$data = array(
 				// "category_code" => $this->input->post("category_code"),
 				"category_name" => $this->input->post("category_name"),
-				"category_description" => $this->input->post("category_description"),
-				'gudang' => $gudang[0]['id']
+				"category_description" => $this->input->post("category_description")
 			);
 			$this->Category_model->save($data);
 			echo json_encode(array("status" => TRUE));

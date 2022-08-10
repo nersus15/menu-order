@@ -47,15 +47,7 @@
                                                     <label for="alamat">Alamat Gudang</label>
                                                     <textarea class="form-control" name="alamat" id="alamat" placeholder="Alamat Gudang"><?= $gudang['alamat'] ?></textarea>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="admin">Admin</label>
-                                                    <select multiple name="admin[]" id="admin" class="form-control select2 <?= form_error('admin') ? 'is-invalid' : ''; ?>">
-                                                        <!-- <option value="" disabled selected>--Admin Gudang--</option> -->
-                                                        <?php foreach ($admin as $v) : ?>
-                                                            <option <?= in_array($v['id_user'], $sadmin) ? 'selected' : null ?> value="<?= $v["id_user"] ?>"><?= $v["user_name"] . ' - ' . ($v['level_wilayah'] == '1' ? 'Prov. ' : ($v['level_wilayah'] == '3' ?  'Kec. ' : '')) . kapitalize($v['nama_wilayah']) ?></option>
-                                                        <?php endforeach; ?>
-                                                    </select>
-                                                </div>
+                            
                                                 <div class="form-group">
                                                     <label for="wilayah">Staff</label>
                                                     <select multiple name="staff[]" id="staff" class="form-control select2 <?= form_error('staff') ? 'is-invalid' : ''; ?>">
