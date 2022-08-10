@@ -20,12 +20,17 @@ class Item extends CI_Controller
 
 	public function index()
 	{
-		$data = [
-			"title" => "Kelola Barang",
-			"items" => $this->Item_model->getAllItems(['barang_gudang.gudang' => sessiondata('login', 'gudang')[0]['id']])
-		];
+		if(empty(sessiondata('login', 'gudang'))){
+			$this->load->view('errors/empty_gudang', ['title'=> 'Kelola Barang']);
+		}else{
+			$data = [
+				"title" => "Kelola Barang",
+				"items" => $this->Item_model->getAllItems(['barang_gudang.gudang' => sessiondata('login', 'gudang')[0]['id']])
+			];
 
-		$this->load->view("items/v_index", $data);
+			$this->load->view("items/v_index", $data);
+		}
+		
 	}
 
 	public function create()
@@ -44,36 +49,41 @@ class Item extends CI_Controller
 		} else {
 			$this->load->model('Gudang_model');
 			$gudang = $this->Gudang_model->getMyGudang();
-			$itemImage = "default.jpg";
-			if (!empty($_FILES["item_image"]['tmp_name'])) {
-				$config = [
-					"allowed_types" => "jpg|jpeg|png|bmp|gif",
-					"upload_path" => "./assets/uploads/items/",
-					"file_name" => $this->input->post("item_code")
-				];
-				$this->load->library("upload", $config);
-				if ($this->upload->do_upload("item_image")) {
-					$itemImage = $this->upload->data("file_name");
-				}else{
-					$err = array('error' => $this->upload->display_errors());
-					$err = join(' ', $err);
+			if(empty($gudang)){
+				$this->load->view('errors/empty_gudang', ['title'=> 'Kelola Barang']);
+			}else{
+				$itemImage = "default.jpg";
+				if (!empty($_FILES["item_image"]['tmp_name'])) {
+					$config = [
+						"allowed_types" => "jpg|jpeg|png|bmp|gif",
+						"upload_path" => "./assets/uploads/items/",
+						"file_name" => $this->input->post("item_code")
+					];
+					$this->load->library("upload", $config);
+					if ($this->upload->do_upload("item_image")) {
+						$itemImage = $this->upload->data("file_name");
+					}else{
+						$err = array('error' => $this->upload->display_errors());
+						$err = join(' ', $err);
+					}
 				}
+				$itemData = [
+					"id_category" => $this->input->post("id_category"),
+					"id_unit" => $this->input->post("id_unit"),
+					"item_code" => $this->input->post("item_code"),
+					"item_name" => $this->input->post("item_name"),
+					"item_image" => $itemImage,
+					"item_stock" => $this->input->post("item_stock"),
+					"item_price" => $this->input->post("item_price"),
+					"item_description" => $this->input->post("item_description"),
+					'gudang' => $gudang[0]['id']
+				];
+	
+				$this->Item_model->insertNewItem($itemData);
+				$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
+				redirect('item');
 			}
-			$itemData = [
-				"id_category" => $this->input->post("id_category"),
-				"id_unit" => $this->input->post("id_unit"),
-				"item_code" => $this->input->post("item_code"),
-				"item_name" => $this->input->post("item_name"),
-				"item_image" => $itemImage,
-				"item_stock" => $this->input->post("item_stock"),
-				"item_price" => $this->input->post("item_price"),
-				"item_description" => $this->input->post("item_description"),
-				'gudang' => $gudang[0]['id']
-			];
-
-			$this->Item_model->insertNewItem($itemData);
-			$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
-			redirect('item');
+			
 		}
 	}
 

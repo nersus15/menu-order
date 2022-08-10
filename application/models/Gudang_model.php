@@ -80,6 +80,9 @@ class Gudang_model extends CI_Model
         $admin = [];
         $items = [];
         $gudang = $q->get('gudang')->result_array();
+        $gudang = array_filter($gudang, function($arr){
+            return !empty(sessiondata('login', 'gudang')) ? $arr['id'] != sessiondata('login', 'gudang')[0]['id'] : true;
+        });
         $tmp = $gudang;
         foreach($gudang as $k => $v){
             $staff = $this->db->select('users.*, wilayah.nama as wilayah_kerja_staff, wilayah.level as level_wilayah_staff')
@@ -178,7 +181,7 @@ class Gudang_model extends CI_Model
                 redirect($redirect);
         }
     }
-    function hirarkiby($where = null, $reverse = false){
+    function hirarkiby($where = null, $reverse = false, $hirarki = true){
 		$level = sessiondata('login', 'willevel');
 		$wil = sessiondata('login', 'idwil');
 		$q = $this->db->select('gudang.*, wilayah.nama as wilayah_gudang, wilayah.level as level_wilayah');
@@ -191,22 +194,25 @@ class Gudang_model extends CI_Model
 				}
 			}
 		}
-		$q->join('wilayah', 'wilayah.id = gudang.wilayah');
-        if(!$reverse){
-            if($level == 2)
-                $q->like('wilayah', substr($wil, 0, 5), 'after');
-            else if($level == 3)
-                $q->where('wilayah', $wil);
+        $q->join('wilayah', 'wilayah.id = gudang.wilayah');
+		if($hirarki){
+            if(!$reverse){
+                if($level == 2)
+                    $q->like('wilayah', substr($wil, 0, 5), 'after');
+                else if($level == 3)
+                    $q->where('wilayah', $wil);
 
-        }else{
-            if($level == 2)
-                $q->where('wilayah', substr($wil, 0, 2) . '.00.00.0000', 'after');
-            else if($level == 3)
-                $q->where('wilayah', substr($wil, 0, 5) . '.00.0000');
+            }else{
+                if($level == 2)
+                    $q->where('wilayah', substr($wil, 0, 2) . '.00.00.0000', 'after');
+                else if($level == 3)
+                    $q->where('wilayah', substr($wil, 0, 5) . '.00.0000');
+            }
         }
-		$data = $q->get('gudang')->result_array();
-		
-
+        $data = $q->get('gudang')->result_array();
+        $data = array_filter($data, function($arr){
+            return !empty(sessiondata('login', 'gudang')) ? $arr['id'] != sessiondata('login', 'gudang')[0]['id'] : true;
+        });
 		return $data;
 	}
 

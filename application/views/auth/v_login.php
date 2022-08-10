@@ -38,11 +38,6 @@
 									<div class="form-group">
 										<div class="d-block">
 											<label for="user_password" class="control-label">Password</label>
-											<div class="float-right">
-												<a href="#" class="text-small">
-													Lupa Password?
-												</a>
-											</div>
 										</div>
 										<input id="user_password" type="password" class="form-control <?= form_error('user_password') ? 'is-invalid' : ''; ?>" name="user_password">
 										<?= form_error('user_password', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
