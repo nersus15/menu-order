@@ -40,7 +40,7 @@
 										<div class="card-body">
 											<h5 class="card-title"><?= sessiondata('login', "user_name"); ?></h5>
 											<p class="card-text"><?= sessiondata('login', "user_email"); ?></p>
-											<p class="card-text">Alamat: <?= (sessiondata('login', "willevel") == '1' ? 'Prov. ' : (sessiondata('login', 'willevel') == 3 ? 'Kec. ' : '')) . kapitalize(sessiondata('login', 'wilnama')); ?></p>
+											<p class="card-text">Alamat: <?= sessiondata('login', 'user_address') . (sessiondata('login', "willevel") == '1' ? 'Prov. ' : (sessiondata('login', 'willevel') == 3 ? 'Kec. ' : '')) . kapitalize(sessiondata('login', 'wilnama')); ?></p>
 											<?php if (is_login('staff')) : ?>
 												<p class="card-text">Gudang: </p>
 												<ul>
