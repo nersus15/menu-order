@@ -87,7 +87,7 @@
 									</div>
 									<div class="card-body mt-4">
 										<p style="font-size: 14px;">
-											<a class="more" data-toggle="collapse" href="#data-booking" role="button" aria-expanded="false" aria-controls="data-booking">
+											<a style="text-decoration: none;" class="more" data-toggle="collapse" href="#data-booking" role="button" aria-expanded="false" aria-controls="data-booking">
 												Lihat detail <span class="float-right"><i class="fas fa-angle-right"></i></span>
 											</a>
 										</p>
