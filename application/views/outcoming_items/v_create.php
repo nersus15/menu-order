@@ -26,7 +26,7 @@
 							<div class="card">
 								<div class="card-body">
 									<div class="row">
-										<div class="col-8 mx-auto">
+										<div class="col-sm-12 col-md-8 mx-auto">
 											<form action="<?= base_url("outcomingitem/create") ?>" method="post">
 												<div class="form-group">
 													<label for="outcoming_item_code">Kode Transaksi</label>
