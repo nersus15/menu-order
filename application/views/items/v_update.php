@@ -95,7 +95,7 @@
 												<hr>
 												<div class="form-action">
 													<button type="submit" class="btn btn-primary btn-lg">Simpan Data</button>
-													<button type="reset" class="btn btn-warning btn-lg">Reset Form</button>
+													<a href="<?= base_url('item') ?>" class="btn btn-warning btn-lg">Batal</a>
 												</div>
 											</form>
 										</div>
