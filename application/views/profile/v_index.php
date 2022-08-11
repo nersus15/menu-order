@@ -40,12 +40,12 @@
 										<div class="card-body">
 											<h5 class="card-title"><?= sessiondata('login', "user_name"); ?></h5>
 											<p class="card-text"><?= sessiondata('login', "user_email"); ?></p>
-											<p class="card-text">Alamat: <?= sessiondata('login', 'user_address') . (sessiondata('login', "willevel") == '1' ? 'Prov. ' : (sessiondata('login', 'willevel') == 3 ? 'Kec. ' : '')) . kapitalize(sessiondata('login', 'wilnama')); ?></p>
+											<p class="card-text">Alamat: <?= sessiondata('login', 'user_address') .' ' . (sessiondata('login', "willevel") == '1' ? 'Prov. ' : (sessiondata('login', 'willevel') == 3 ? 'Kec. ' : '')) . kapitalize(sessiondata('login', 'wilnama')); ?></p>
 											<?php if (is_login('staff')) : ?>
 												<p class="card-text">Gudang: </p>
 												<ul>
 													<?php foreach ($gudang as $v) : ?>
-														<li><?= $v['nama'] . " - " . ($v['level_wilayah_gudang'] == '1' ? 'Prov. ' : ($v['level_wilayah_gudang'] == '3' ?  'Kec. ' : '')) . kapitalize($v['nama_wilayah_gudang']) ?></li>
+														<li><?= $v['nama'] . " - " . $v['alamat'] . ' ' . ($v['level_wilayah_gudang'] == '1' ? 'Prov. ' : ($v['level_wilayah_gudang'] == '3' ?  'Kec. ' : '')) . kapitalize($v['nama_wilayah_gudang']) ?></li>
 													<?php endforeach ?>
 												</ul>
 											<?php endif ?>
