@@ -24,10 +24,10 @@
 					<div class="row">
 						<div class="col-12">
 							<?php $flash = $this->session->flashdata('message');
-								if(!empty($flash)){
-									echo '<div class="alert alert-'. $flash['type'] .'">' . $flash['message'] . '</div>';
-									unset($_SESSION['message']);
-								}
+							if (!empty($flash)) {
+								echo '<div class="alert alert-' . $flash['type'] . '">' . $flash['message'] . '</div>';
+								unset($_SESSION['message']);
+							}
 							?>
 						</div>
 						<div class="col-sm-12 col-md-4">
@@ -40,13 +40,15 @@
 										<div class="card-body">
 											<h5 class="card-title"><?= sessiondata('login', "user_name"); ?></h5>
 											<p class="card-text"><?= sessiondata('login', "user_email"); ?></p>
-											<p class="card-text">Wilayah Kerja: <?= (sessiondata('login', "willevel") == '1' ? 'Prov. ' : (sessiondata('login', 'willevel') == 3 ? 'Kec. ': '')) . kapitalize(sessiondata('login', 'wilnama')); ?></p>
-											<p class="card-text"><?= is_login('admin') ? 'Gudang yang diampu' : 'Gudang' ?>:</p>
-											<ul>
-											<?php foreach($gudang as $v): ?>
-												<li><?= $v['nama'] . " - " .($v['level_wilayah_gudang'] == '1' ? 'Prov. ' :( $v['level_wilayah_gudang'] == '3' ?  'Kec. ' : '') ) . kapitalize($v['nama_wilayah_gudang']) ?></li>
-											<?php endforeach ?>
-											</ul>
+											<p class="card-text">Alamat: <?= (sessiondata('login', "willevel") == '1' ? 'Prov. ' : (sessiondata('login', 'willevel') == 3 ? 'Kec. ' : '')) . kapitalize(sessiondata('login', 'wilnama')); ?></p>
+											<?php if (is_login('staff')) : ?>
+												<p class="card-text">Gudang: </p>
+												<ul>
+													<?php foreach ($gudang as $v) : ?>
+														<li><?= $v['nama'] . " - " . ($v['level_wilayah_gudang'] == '1' ? 'Prov. ' : ($v['level_wilayah_gudang'] == '3' ?  'Kec. ' : '')) . kapitalize($v['nama_wilayah_gudang']) ?></li>
+													<?php endforeach ?>
+												</ul>
+											<?php endif ?>
 											<p class="card-text"><small class="text-muted">Didaftarkan Pada : <?= date('d M Y', strtotime(sessiondata('login', "created_at"))); ?></small></p>
 											<?php if (sessiondata('login', "user_role") == "admin") : ?>
 												<span class="badge badge-success">Admin</span>

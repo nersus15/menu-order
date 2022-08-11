@@ -20,7 +20,6 @@
                 <section class="section">
                     <div class="section-header d-flex justify-content-between">
                         <h1><?= $title; ?></h1>
-                        <a href="<?= base_url("outcomingitem/create") ?>" class="btn btn-primary btn-lg">Tambah Barang Keluar</a>
                     </div>
                     <!-- alert flashdata -->
                     <?php
