@@ -84,7 +84,7 @@ defined('EXIT_DATABASE')       OR define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 
-define("ASSET_PATH", str_replace("system/", "assets/", BASEPATH));
+define("ASSET_PATH", str_replace("system" . DIRECTORY_SEPARATOR, "assets" . DIRECTORY_SEPARATOR, BASEPATH));
 
 
 define('MYSQL_TIMESTAMP_FORMAT', 'Y-m-d H:i:s');

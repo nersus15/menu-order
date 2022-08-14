@@ -10,7 +10,7 @@
 		$pdf->setPaper('A4', 'potrait');
 		$pdf->render();
 		if($return){
-			file_put_contents(ASSET_PATH . 'nota/' . $title . '.pdf', $pdf->output());
+			file_put_contents(get_path(ASSET_PATH . 'nota/' . $title . '.pdf'), $pdf->output());
 			return $title . '.pdf';
 		}else{
 			// Menjadikan HTML sebagai PDF

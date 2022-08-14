@@ -122,7 +122,7 @@ class Incomingitem extends CI_Controller
 			)
 		];
 		$templateNota = $this->load->view('reports/template_nota', $data, true);
-		$nota = buat_pdf($templateNota, 'Nota - ' . $transaksi->id_transaksi, true);
+		$nota = buat_pdf($templateNota, 'Nota - ' . $transaksi->id_transaksi . random(2), true);
 
 		$newTransaksi = [
 			"id_items" => $transaksi->id_items,
@@ -184,7 +184,7 @@ class Incomingitem extends CI_Controller
 					'id' => random(8),
 					'jenis' => 'personal',
 					'user' => $usr->id_user,
-					'pesan' => "Status transaksi dengan kode <b>" . $transaksi->transaksi_code . '</b> telah dirubah menjadi <b>Pending<b> dengan keterangan sebagai berikut <br> <p>"' . $post['keterangan'] . '"</p>',
+					'pesan' => "Status transaksi dengan kode <b>" . $transaksi->transaksi_code . '</b> telah dirubah menjadi <b>Pending</b> dengan keterangan sebagai berikut <br> <p><b>"' . $post['keterangan'] . '"</b></p>',
 					'link' => 'outcomingitem'
 				));
 			}
@@ -222,6 +222,31 @@ class Incomingitem extends CI_Controller
 				->update('barang_gudang', ['item_stock' => $barangAdadigudang['item_stock'] + $masuk]);
 		}
 		redirect('incomingitem');
+	}
+
+	function tes(){
+		$this->load->helper('html2pdf');
+		$data = [
+			'status' =>"Testing",
+			'tgl' => date('d M Y', time()),
+			'keterangan' => "ini adalah testing untuk cetak nota",
+			'kode_barang' => 'BRGTSTING001',
+			'nama_barang' => "Barang Testing 01",
+			'jumlah_terima' => 10,
+			'jumlah_kirim' => 10,
+			'tgl_kirim' => waktu(),
+			'tgl_terima' => waktu(),
+			'pengirim' => array(
+				'nama' => "Fathurrahman", 
+				'alamat' => 'Jurgat',
+				'gudang' => "Gudang Jurgat",
+			), 
+			'penerima' => array(
+				'nama' => "Salim", 
+				'alamat' => "Goroh",
+				'gudang' => "Gudang Goroh",
+			)
+		];
 	}
 	
 }
