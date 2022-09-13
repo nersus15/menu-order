@@ -15,34 +15,30 @@ class User extends CI_Controller
 	public function index()
 	{
 		$data = [
-			"title" => "Kelola User",
-			"users" => $this->User_model->getAllUsers()
+			"title" => "Kelola Pegawai (<small> Kasir </small>)",
+			"users" => $this->User_model->getby(['role' => 'Kasir'])
 		];
 
-		$this->load->view("users/v_index", $data);
+		$this->load->view("staff/v_index", $data);
 	}
 
-	public function create($role = null)
-	{
-		$this->load->model('Gudang_model');
-		$role = !empty($role) ? sandi($role) : $role;
-		$wilayah = $this->User_model->gethirarkiWilayah(['level' => 3]);
-		$data = [
-			"title" => !in_array($role, ['admin', 'staff']) ? "Tambah User Baru"  : "Tambah User ". kapitalize($role) ." Baru",
-			'gudang' => $this->Gudang_model->getbyuser(),
-			'wilayah' => $wilayah,
-			'role' => $role
-		];
-		$this->form_validation->set_rules('user_name', 'Nama', 'required');
-		$this->form_validation->set_rules('user_email', 'E-mail', 'required|valid_email|is_unique[users.user_email]');
-		$this->form_validation->set_rules('user_phone', 'Nomor HP', 'required|is_unique[users.user_phone]');
-		$this->form_validation->set_rules('user_address', 'Alamat', 'required');
-		$this->form_validation->set_rules('wilayah', 'Wilayah Kerja', 'required');
-		$this->form_validation->set_rules('user_password', 'Password', 'required');
-		$this->form_validation->set_rules('user_password_confirm', 'Konfirmasi Password', 'required|matches[user_password]');
+	public function add($method = 'baru', $id = null){
+		$this->form_validation->set_rules('nama', 'Nama Lengkap', 'required');
+		$this->form_validation->set_rules('username', 'Username', 'required|is_unique[users.username]');
+		$this->form_validation->set_rules('hp', 'Nomor HP', 'required|is_unique[users.hp]');
+		$this->form_validation->set_rules('alamat', 'Alamat', 'required');
+		$view = $method == 'baru' ? 'staff/v_create' : 'staff/v_update';
+		if($method == 'baru'){
+			$this->form_validation->set_rules('user_password', 'Password', 'required');
+			$this->form_validation->set_rules('user_password_confirm', 'Konfirmasi Password', 'required|matches[user_password]');
+		}
+
 		$post = $this->input->post();
 		if ($this->form_validation->run() == FALSE) {
-			$this->load->view("users/v_create", $data);
+			$this->load->view($view, [
+				"title" => "Kelola Pegawai (<small> Kasir </small>)",
+				'old' => $post
+			]);
 		} else {
 			$userAvatar = $_FILES["user_avatar"];
 			if ($userAvatar) {
@@ -56,42 +52,32 @@ class User extends CI_Controller
 				} else {
 					$userAvatar = "default.png";
 				}
+				$post['gambar'] = $userAvatar;
 			}
-			$userData = [
-				"user_name" => $post["user_name"],
-				"user_email" => $post["user_email"],
-				"user_phone" => $post["user_phone"],
-				"user_address" => $post["user_address"],
-				"user_avatar" => $userAvatar,
-				'wilayah' => $post['wilayah'],
-				"user_password" => password_hash($post["user_password"], PASSWORD_DEFAULT),
-				"user_role" => $role
-			];
-			$dataGudang = [];
-			if(!empty($post['gudang']) && (count($post['gudang']) == 1 && !empty($post['gudang'][0]))){
-				$gudang = $post['gudang'];
-				if($role == 'staff'){
-					$userData['gudang'] = $gudang[0];
-				}else{
-					$dataGudang = $gudang;
-				}
+			$post['id'] = random(8);
+			$post['registrar'] = sessiondata('login', 'id');
+			$post['password'] = password_hash($post['user_password'], PASSWORD_DEFAULT);
+			$post['role'] = 'Kasir';
+			$post['nama_lengkap'] = $post['nama'];
+			unset($post['user_password'], $post['user_password_confirm'], $post['nama']);
+			
+			if($method == 'baru'){
+				$this->db->insert('users', $post);
+				$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
+			}else{
+				$this->db->where('id', $id)->update('users', $post);
+				$this->session->set_flashdata('message', ['message' => 'Diupdate', 'type' => 'success']);
 			}
-			$this->User_model->insertNewUser($userData);
-			if($role == 'admin' && !empty($dataGudang)){
-				$newUser = $this->User_model->getLatestInsert();
-				$dataAdmin = [];
-				foreach($dataGudang as $v){
-					$dataAdmin[] = array(
-						'admin' => $newUser['id_user'],
-						'gudang' => $v
-					);
-				}
-				$this->load->model('Gudang_model');
-				$this->Gudang_model->insertAdmin($dataAdmin);
-			}
-			$this->session->set_flashdata('message', ['message' => 'Ditambah', 'type' => 'success']);
-			redirect($role);
+			redirect('user');
 		}
+	}
+	public function create()
+	{
+		$data = [
+			"title" => "Kelola Pegawai (<small> Kasir </small>)",
+			"users" => $this->User_model->getby(['role' => 'Kasir'])
+		];
+		$this->load->view("staff/v_create", $data);			
 	}
 
 	public function update($id, $role = null)
@@ -131,12 +117,11 @@ class User extends CI_Controller
 
 	public function delete($id)
 	{
-		$user = $this->User_model->getUserById($id);
-		if (file_exists('./assets/uploads/users/' . $user["user_avatar"]) && $user["user_avatar"]) {
-			unlink('./assets/uploads/users/' . $user["user_avatar"]);
+		$user = $this->User_model->getby(['id' => $id]);
+		if (file_exists('./assets/img/avatar/users/' . $user["gambar"]) && $user["gambar"] != 'default.png') {
+			unlink('./assets/img/avatar/users/' . $user["gambar"]);
 		}
-
-		$this->User_model->deleteSelectedUser($id);
+		$this->db->where('id', $id)->delete('users');
 		$this->session->set_flashdata('message',  ['message' => 'Dihapus', 'type' => 'success']);
 		redirect('user');
 	}

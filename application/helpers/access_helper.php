@@ -11,7 +11,7 @@ function must_login()
 function must_admin()
 {
 	$mustAdmin = get_instance();
-	if (!is_login('admin')) {
+	if (!is_login('Manager')) {
 		redirect('auth/block');		
 	}
 }

@@ -942,7 +942,9 @@ uihelper = function () {
 
         var addbtn = opt.buttonadd ? opt.buttonadd : '.btn-add';
         var removebtn = opt.buttonremove ? opt.buttonremove : '.btn-remove';
-
+        if(opt.empty == undefined){
+            opt.empty = false;
+        }
         if(opt.removeTemplate){
             tbody.empty();
             index = null;
@@ -1000,8 +1002,12 @@ uihelper = function () {
                 opt.beforeDelete(el, rindex);
             }
             index--;
-            $(el).remove();
-            reindexing();
+            if(opt.empty && index == 0){
+                opt.onEmpty();
+            }else{
+                $(el).remove();
+                reindexing();
+            }
         }
 
         function reindexing(){
@@ -1020,8 +1026,13 @@ uihelper = function () {
                 if(i == rows.length - 1){
                     if(i > 0)
                         btnremove.show();
-                    else
-                        btnremove.hide();
+                    else{
+                        if(!opt.empty)
+                            btnremove.hide();
+                        else
+                            btnremove.show();
+                    }
+                       
 
                     btnadd.show();
                 }else{

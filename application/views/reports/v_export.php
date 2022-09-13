@@ -39,17 +39,7 @@
                                         <hr>
                                     </div>
                                     <div class="row">
-                                        <?php if ($jenis == 'transaksi') : ?>
-                                            <div class="col-sm-12 col-md-6 form-group">
-                                                <label for="">Jenis Transaksi</label>
-                                                <select name="" id="jenis-transaksi" class="form-control">
-                                                    <option value="semua" selected>Semua Transaksi</option>
-                                                    <option value="keluar">Transaksi Keluar</option>
-                                                    <option value="masuk">Transaksi Masuk</option>
-                                                </select>
-                                            </div>
-                                        <?php endif ?>
-                                        <?php if (is_login('admin')) : ?>
+                                        <!-- <?php if (is_login('Manager')) : ?>
                                             <div class="col-sm-12 col-md-6 form-group">
                                                 <label for="">Gudang</label>
                                                 <select name="" id="sgudang" class="form-control">
@@ -66,7 +56,7 @@
                                                     <?php endforeach ?>
                                                 </select>
                                             </div>
-                                        <?php endif ?>
+                                        <?php endif ?> -->
                                         <div class="col-sm-12 col-md-6 form-group">
                                             <label for="">Waktu</label>
                                             <div class="row ml-4">
@@ -147,25 +137,12 @@
                     }
                 });
                 $("#export").click(function() {
-                    var url = path + 'report/';
-                    var gudang = role == 'admin' ? $("#sgudang").val() : 'semua';
-                    if ($("input[name='jenis']:checked").val() == 'semua') {
-                        if(jenis == 'transaksi'){
-                            var tipe = $("#jenis-transaksi").val();
-                            url += 'rtransaksi/' + gudang + '/' + tipe;
-                        }else if(jenis == 'barang'){
-                            url += 'rbarang/' + gudang;
-                        }
-                    } else {
-                        var waktu = $("#filter-val").val();
-                        if(jenis == 'transaksi'){
-                            var tipe = $("#jenis-transaksi").val();
-                            url += 'rtransaksi/' + gudang + '/' + tipe + '/' + waktu;
-                        }else if(jenis == 'barang'){
-                            url += 'rbarang/' + gudang + '/' + waktu;
-                        }
-                    }
-                    window.open(url, '_blank');
+                    var url = path + 'report/rtransaksi/';
+                    var waktu = $("#filter-val").val();
+                    
+                    if($("#jenis-filter").is(':checked'))
+                        url +='waktu';
+                window.open(url, '_blank');
                 });
             });
         </script>

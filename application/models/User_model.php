@@ -57,7 +57,18 @@ class User_model extends CI_Model
 		$this->db->delete("users");
 	}
 	function getby($where = null){
-
+		$q = $this->db->select('users.*');
+		if(!empty($where)){
+			foreach($where as $k => $v){
+				if(is_numeric($k)){
+					$q->where($v, null, false);
+				}else{
+					$q->where($k, $v);
+				}
+			}
+		}
+		$data = $q->get('users')->result_array();
+		return $data;
 	}
 	function userhirarkiby($where = null, $loadGudang = false, $reverse = false){
 		$level = sessiondata('login', 'willevel');

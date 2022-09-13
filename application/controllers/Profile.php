@@ -7,8 +7,6 @@ class Profile extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('Profile_model');
-
 		must_login();
 	}
 
@@ -16,8 +14,7 @@ class Profile extends CI_Controller
 	{
 		
 		$data["title"] = "Profile Saya";
-		$this->load->model('Gudang_model');
-		$data['gudang'] = $this->Gudang_model->getMyGudang();
+		// $data['gudang'] = $this->Gudang_model->getMyGudang();
 
 		$this->load->view('profile/v_index', $data);
 	}
@@ -25,37 +22,37 @@ class Profile extends CI_Controller
 	public function editProfile()
 	{
 
-		$this->form_validation->set_rules("user_name", "Nama", "required|trim");
-		$this->form_validation->set_rules("user_email", "E-mail", "required|trim|valid_email");
-		$this->form_validation->set_rules("user_phone", "No HP", "required|trim");
-		$this->form_validation->set_rules("user_address", "Alamat", "required|trim");
+		$this->form_validation->set_rules("username", "Username", "required|trim");
+		$this->form_validation->set_rules("nama", "Nama Lengkap", "required|trim");
+		$this->form_validation->set_rules("hp", "No HP", "required|trim");
+		$this->form_validation->set_rules("alamat", "Alamat", "required|trim");
 		if ($this->form_validation->run() == FALSE) {
 			$this->index();
 		} else {
 			$profileData = [
-				"user_name" => $this->input->post("user_name"),
-				"user_email" => $this->input->post("user_email"),
-				"user_phone" => $this->input->post("user_phone"),
-				"user_address" => $this->input->post("user_address"),
+				"username" => $this->input->post("username"),
+				"nama_lengkap" => $this->input->post("nama"),
+				"hp" => $this->input->post("hp"),
+				"alamat" => $this->input->post("alamat"),
 			];
 			$newSessionData = sessiondata();
 			// cek jika ada gambar yang diupload
-			$uploadImage = $_FILES["user_avatar"];
-
+			$uploadImage = $_FILES["gambar"];
 			if ($uploadImage) {
 				$config["allowed_types"] = "gif|jpg|png|bmp|jpeg";
 				$config["upload_path"] = "./assets/img/avatar/";
-				$config['file_name'] = round(microtime(true) * 1000);
+				$config['file_name'] = random(8);
 				$this->load->library("upload", $config);
-				if ($this->upload->do_upload("user_avatar")) {
+				// var_dump($this->upload->do_upload("gambar"));die;
+				if ($this->upload->do_upload("gambar")) {
 					$userSession = sessiondata();
-					$oldAvatar = $userSession["user_avatar"];
+					$oldAvatar = $userSession["gambar"];
 					if ($oldAvatar != "default.png") {
 						unlink('./assets/img/avatar/' . $oldAvatar);
 					}
 					$newAvatar = $this->upload->data("file_name");
-					$newSessionData['user_avatar'] = $newAvatar;
-					$this->db->set("user_avatar", $newAvatar);
+					$newSessionData['gambar'] = $newAvatar;
+					$profileData['gambar'] = $newAvatar;
 				} else {
 					echo $this->upload->display_errors();
 				}
@@ -67,7 +64,7 @@ class Profile extends CI_Controller
 			}
 
 
-			$this->Profile_model->updateProfile($profileData);
+			$this->db->where('id', sessiondata('login', 'id'))->update("users", $profileData);
 			$this->session->set_userdata('login' . '_' . APPNAME, $newSessionData);
 			$this->session->set_flashdata('message', ['message' => 'Profile Berhasil diperbarui', 'type' => 'success']);
 			redirect("profile");
@@ -101,9 +98,8 @@ class Profile extends CI_Controller
 				} else {
 					// password sudah bisa diterima
 					$passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
-
-					$this->Profile_model->updatePassword($passwordHash);
-					$sessiondata['user_password'] = $passwordHash;
+					$this->db->where('id', sessiondata('login', 'id'))->update("users", ['password' => $passwordHash]);
+					$sessiondata['password'] = $passwordHash;
 					$this->session->set_userdata('login' . '_' . APPNAME, $sessiondata);
 					$this->session->set_flashdata('message', ['message' => 'Password Berhasil Diupdate', 'type' => 'success']);
 					redirect("profile");

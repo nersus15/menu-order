@@ -30,9 +30,9 @@
 							<div class="card-body">
 								<form method="POST" action="<?= base_url("auth"); ?>">
 									<div class="form-group">
-										<label for="user_email" class="control-label">Email</label>
-										<input id="user_email" type="text" class="form-control <?= form_error('user_email') ? 'is-invalid' : ''; ?>" name="user_email" autofocus>
-										<?= form_error('user_email', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+										<label for="username" class="control-label">Username</label>
+										<input id="username" type="text" class="form-control <?= form_error('username') ? 'is-invalid' : ''; ?>" value="<?= set_value('username') ?>" name="username" autofocus>
+										<?= form_error('username', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 									</div>
 
 									<div class="form-group">

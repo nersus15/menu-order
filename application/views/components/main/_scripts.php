@@ -31,6 +31,7 @@
 
 <!-- Page Specific JS File -->
 <script src="<?= base_url("assets/js/page/index-0.js") ?>"></script>
+<script src="<?= base_url("assets/js/qrcode.js") ?>"></script>
 
 <!-- Template JS File -->
 <script src="<?= base_url("assets/js/scripts.js") ?>"></script>
@@ -39,8 +40,8 @@
 	var flashData = null;
 	var type = undefined;
 	var userinfo = {
-		id: <?= sessiondata('login', 'id_user') ?>,
-		nama: "<?= sessiondata('login', 'user_name') ?>",
+		id: "<?= sessiondata('login', 'id') ?>",
+		nama: "<?= sessiondata('login', 'username') ?>",
 	}
 
 	if($('.flash-data').length > 0)
@@ -161,10 +162,10 @@
 	};
 
 	$(document).ready(function(){
-		if(notifBtn.length > 0){
-            renderNotifikasi();
-            setInterval(renderNotifikasi, 10000);
-        }
+		// if(notifBtn.length > 0){
+        //     renderNotifikasi();
+        //     setInterval(renderNotifikasi, 10000);
+        // }
 	});
 </script>
 <?php

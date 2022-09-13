@@ -9,7 +9,7 @@ class Report extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->library('Dompdf_gen');
-		$this->load->model('Report_model');
+		// $this->load->model('Report_model');
 		$this->load->helper('html2pdf');
 		must_login();
 	}
@@ -18,41 +18,30 @@ class Report extends CI_Controller
 		if(!in_array($jenis, ['transaksi', 'barang'])){
 			show_error("Tidak Ada Data ". ucfirst($jenis) . " Yang Bisa Di Export", 403, 'Ilegal Akses');
 		}
-		$this->load->model('Gudang_model');
 		$this->load->view('reports/v_export', [
-			'title' => 'Export Data ' . kapitalize($jenis),
+			'title' => 'Export Data Penjualan',
 			'jenis' => $jenis,
-			'admin' => sessiondata('login', 'user_role') == 'admin',
-			'listGudang' => $this->Gudang_model->getBy(null, false)
 
 		]);
 	}
 
-	function rtransaksi($gudang = 'semua', $jenis = null, $tgl = null){
+	function rtransaksi($tgl = null){
 		$this->load->helper('html2pdf');
-		$this->load->model("Gudang_model");
-		$title = 'Laporan Transaksi';
-		$filter = [];
-		if($jenis == 'semua') $jenis = null;
+		$this->load->model("Order_model");
+		$title = 'Laporan Penjualan';
+		$filter = ['pesanan.status' => 'CLOSE'];
 		if(!empty($tgl)){
 			$tgl = explode('_', $tgl);
-			$filter[] = 'DATE(transaksi.transaksi_date) BETWEEN "' . $tgl[0] . '" AND "' . $tgl[1] .'"';
+			$title .= ' ' . $tgl[0] . ' sd ' . $tgl[1];
+			$filter[] = 'DATE(pesanan.tanggal) BETWEEN "' . $tgl[0] . '" AND "' . $tgl[1] .'"';
 		}
-		if(sessiondata('login', 'user_role') == 'staff') $filter[]= 'transaksi.dihapus is NULL';
 		$data = [
-			'gudang' => $this->Gudang_model->report('transaksi', $gudang, $jenis, $filter),
+			'orders' => $this->Order_model->report($filter),
 			'tgl' => $tgl,
-			'sgudang' => $gudang
-
 		];
-		if(empty($jenis)) $jenis = 'semua';
-		else $title .= " " . kapitalize($jenis);
+		// response($data['orders']);
 
-		if(!empty($tgl)){
-			$title .= $tgl[0] . ' - ' . $tgl[1];
-		}
-
-		$html = $this->load->view('reports/transactions/' . $jenis, $data, true);
+		$html = $this->load->view('reports/transactions/index', $data, true);
 		buat_pdf($html, $title);
 	}
 	function rbarang($sgudang = null, $tgl = null){

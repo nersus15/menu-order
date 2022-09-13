@@ -54,7 +54,8 @@
  * NOTE: If you change these, also change the error_reporting() code below
  */
 	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
-
+	if(empty($_POST) && $_SERVER['REQUEST_METHOD'] == 'POST')
+		$_POST = json_decode(file_get_contents('php://input'), true);
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING

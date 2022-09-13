@@ -130,14 +130,14 @@ if (!method_exists($this, 'is_login')) {
     {
         /** @var CI_Controller $ci */
         $ci = &get_instance();
-        $userdata = sessiondata('login');
+        $userdata = sessiondata('login_' . APPNAME);
         if (!empty($callback) && is_callable($callback))
             return $callback($role, $wil, $userdata);
 
         if (empty($role) && empty($wil)) {
             return !empty($userdata);
         } elseif (!empty($userdata) && !empty($role) && empty($wil)) {
-            return $userdata['user_role'] == $role;
+            return $userdata['role'] == $role;
         } elseif (!empty($userdata) && empty($role) && !empty($wil)) {
             return $userdata['wilayah'] == $wil;
         } elseif (!empty($userdata) && !empty($role) && !empty($wil)) {
@@ -364,5 +364,11 @@ if (!function_exists('sandi')) {
             }
         }
         return $result;
+    }
+}
+
+if(!function_exists('is_associative')){
+    function is_associative($array){
+        return array_keys($array) !== range(0, count($array) - 1);
     }
 }

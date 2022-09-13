@@ -34,27 +34,15 @@
 							<div class="card mb-3" style="max-width: 540px;">
 								<div class="row no-gutters">
 									<div class="col-md-12">
-										<img style="width: 100%; height: auto" src="<?= base_url("assets/img/avatar/" . sessiondata('login', "user_avatar")) ?>" class="card-img" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+										<img style="width: 100%; height: auto" src="<?= base_url("assets/img/avatar/" . sessiondata('login', "gambar")) ?>" class="card-img" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
 									</div>
 									<div class="col-md-12">
 										<div class="card-body">
-											<h5 class="card-title"><?= sessiondata('login', "user_name"); ?></h5>
-											<p class="card-text"><?= sessiondata('login', "user_email"); ?></p>
-											<p class="card-text">Alamat: <?= sessiondata('login', 'user_address') .' ' . (sessiondata('login', "willevel") == '1' ? 'Prov. ' : (sessiondata('login', 'willevel') == 3 ? 'Kec. ' : '')) . kapitalize(sessiondata('login', 'wilnama')); ?></p>
-											<?php if (is_login('staff')) : ?>
-												<p class="card-text">Gudang: </p>
-												<ul>
-													<?php foreach ($gudang as $v) : ?>
-														<li><?= $v['nama'] . " - " . $v['alamat'] . ' ' . ($v['level_wilayah_gudang'] == '1' ? 'Prov. ' : ($v['level_wilayah_gudang'] == '3' ?  'Kec. ' : '')) . kapitalize($v['nama_wilayah_gudang']) ?></li>
-													<?php endforeach ?>
-												</ul>
-											<?php endif ?>
-											<p class="card-text"><small class="text-muted">Didaftarkan Pada : <?= date('d M Y', strtotime(sessiondata('login', "created_at"))); ?></small></p>
-											<?php if (sessiondata('login', "user_role") == "admin") : ?>
-												<span class="badge badge-success">Admin</span>
-											<?php else : ?>
-												<span class="badge badge-warning">Staff</span>
-											<?php endif; ?>
+											<h5 class="card-title"><?= sessiondata('login', "username"); ?></h5>
+											<p class="card-text"><?= sessiondata('login', "nama_lengkap"); ?></p>
+											<p class="card-text">Alamat: <?= sessiondata('login', 'alamat') .' ' . (sessiondata('login', "willevel") == '1' ? 'Prov. ' : (sessiondata('login', 'willevel') == 3 ? 'Kec. ' : '')) . kapitalize(sessiondata('login', 'wilnama')); ?></p>
+											<p class="card-text"><small class="text-muted">Didaftarkan Pada : <?= date('d M Y', strtotime(sessiondata('login', "ditambah"))); ?></small></p>
+											<span class="badge badge-success"><?= sessiondata('login', 'role') ?></span>
 										</div>
 									</div>
 								</div>
@@ -67,28 +55,28 @@
 									<hr>
 									<form action="<?= base_url("profile/editprofile") ?>" method="post" enctype="multipart/form-data">
 										<div class="form-group">
-											<label for="user_name">Nama</label>
-											<input type="text" id="user_name" name="user_name" class="form-control <?= form_error('user_name') ? 'is-invalid' : ''; ?>" value="<?= sessiondata('login', "user_name"); ?>">
-											<?= form_error('user_name', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+											<label for="username">Username</label>
+											<input type="text" id="username" name="username" class="form-control <?= form_error('username') ? 'is-invalid' : ''; ?>" value="<?= sessiondata('login', "username"); ?>">
+											<?= form_error('username', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 										</div>
 										<div class="form-group">
-											<label for="user_email">Email</label>
-											<input type="text" id="user_email" name="user_email" class="form-control <?= form_error('user_email') ? 'is-invalid' : ''; ?>" value="<?= sessiondata('login', "user_email"); ?>">
-											<?= form_error('user_email', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+											<label for="nama">Nama Lengkap</label>
+											<input type="text" id="nama" name="nama" class="form-control <?= form_error('nama') ? 'is-invalid' : ''; ?>" value="<?= sessiondata('login', "nama_lengkap"); ?>">
+											<?= form_error('nama', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 										</div>
 										<div class="form-group">
-											<label for="user_phone">Nomor HP</label>
-											<input type="text" id="user_phone" name="user_phone" class="form-control <?= form_error('user_phone') ? 'is-invalid' : ''; ?>" value="<?= sessiondata('login', "user_phone"); ?>">
-											<?= form_error('user_phone', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+											<label for="hp">Nomor HP</label>
+											<input type="text" id="hp" name="hp" class="form-control <?= form_error('hp') ? 'is-invalid' : ''; ?>" value="<?= sessiondata('login', "hp"); ?>">
+											<?= form_error('hp', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 										</div>
 										<div class="form-group">
-											<label for="user_address">Alamat</label>
-											<textarea name="user_address" id="user_address" rows="10" class="form-control <?= form_error('user_address') ? 'is-invalid' : ''; ?>"><?= sessiondata('login', 'user_address'); ?></textarea>
-											<?= form_error('user_address', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
+											<label for="alamat">Alamat</label>
+											<textarea name="alamat" id="alamat" rows="10" class="form-control <?= form_error('alamat') ? 'is-invalid' : ''; ?>"><?= sessiondata('login', 'alamat'); ?></textarea>
+											<?= form_error('alamat', '<div class="invalid-feedback font-weight-bold pl-1">', '</div>') ?>
 										</div>
 										<div class="form-group">
-											<label for="user_avatar">Avatar</label>
-											<input type="file" id="user_avatar" name="user_avatar" class="form-control">
+											<label for="gambar">Avatar</label>
+											<input type="file" id="gambar" name="gambar" class="form-control">
 											<small class="text-muted">Kosongkan jika tidak ingin merubah</small>
 										</div>
 										<div class="form-action">
