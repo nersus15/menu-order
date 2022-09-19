@@ -193,7 +193,17 @@
                 }
 			}
             renderTable();
-
+            function connect(token) {
+                return new Promise(function(resolve, reject) {
+                    var server = new WebSocket('wss://ws-kamscode.herokuapp.com');
+                    server.onopen = function() {
+                        resolve(server);
+                    };
+                    server.onerror = function(err) {
+                        reject(err);
+                    };
+                });
+            }
             async function renderTable(loading= true){
                 var emptyData = '<tr id="none">' +
                     '<td colspan="4" style="text-align: center;">' +
@@ -211,14 +221,16 @@
                         data = data.data;
                         Object.keys(data).forEach(e => {
                             var rowdata = data[e];
+                            var display = rowdata.status == 'PROSES' ? 'none' : 'block';
                             rows += '<tr>' +
                                 '<td>' + no + '</td>'+
                                 '<td>' + e + '</td>'+
                                 '<td>' + rowdata.atasnama + '</td>' +
                                 '<td>' + rowdata.meja + '</td>' +
-                                '<td>' +
-                                 '<button type="button" data-meja ="'+ rowdata.meja +'" data-token="' + e +'" class="bayar btn btn-primary btn-xs ml-2">Bayar</button>' +
-                                 '<button type="button" data-token="' + e +'" class="detail btn btn-info btn-xs ml-2">Detail</button>' +
+                                '<td class="row">' +
+                                 '<button type="button" data-meja ="'+ rowdata.meja +'" data-token="' + e +'" class="bayar btn btn-primary btn-sm ml-2">Bayar</button>' +
+                                 '<button style="display:'+ display +'" type="button" data-meja ="'+ rowdata.meja +'" data-token="' + e +'" class="proses btn btn-warning btn-sm ml-2">Proses</button>' +
+                                 '<button type="button" data-token="' + e +'" class="detail btn btn-info btn-sm ml-2">Detail</button>' +
                                 '</td>' + 
                                 '</tr>';                            
                         });
@@ -230,6 +242,22 @@
 				            $("#modal-order").on('shown.bs.modal', {bayar: $(this).hasClass('bayar'), token: $(this).data('token')}, onShown);
                             $("#modal-order").modal('show');
                         });
+                        $(".proses").click(async function(){
+                            var meja = $(this).data('meja'),
+                                token = $(this).data('token');
+                            var b = confirm("Yakin ingin memproses pesanan untuk meja " + meja + ' ?');
+                            if(!b) return;
+                            showLoading();
+                            $.get(path + 'order/proses/' + token, function(data){
+                                endLoading();
+                                connect().then(function(socket){
+                                    socket.send(JSON.stringify({type: 'pelanggan'}));
+								    socket.close();
+                                });                                
+                            }).fail(function(){
+                                endLoading();
+                            });
+                        });
                         $(".bayar").click(async function(){
                             var meja = $(this).data('meja'),
                                 token = $(this).data('token');
@@ -238,7 +266,12 @@
                             showLoading();
                             $.get(path + 'order/pay/' + token + '/' + meja, function(data){
                                 endLoading();
-                                alert("Berhasil melakukan pembayaran untuk meja " + meja);
+                                connect().then(function(socket){
+                                    socket.send(JSON.stringify({type: 'pelanggan'}));
+								    socket.close();
+                                    alert("Berhasil melakukan pembayaran untuk meja " + meja);
+                                });
+
                             }).fail(function(){
                                 endLoading();
                             });

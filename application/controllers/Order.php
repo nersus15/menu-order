@@ -44,8 +44,6 @@ class Order extends CI_Controller{
                 }
             }
         }
-        // Tandai Meja Terisi
-        $this->db->where('kode', $kode)->update('meja', ['status' => 'TERISI']);
 
         // Tandai Token Sudah digunakan
         $this->db->where('token', $token)->update('tokens', ['diakses' => waktu(null, MYSQL_DATE_FORMAT)]);
@@ -131,10 +129,16 @@ class Order extends CI_Controller{
         $this->Order_model->pay($token, $meja);
         response('Berhasil');
     }
+    function proses($token){
+        if(!is_login()) response('Anda belum login', 403);
+
+        $this->Order_model->proses($token);
+        response('Berhasil');
+    }
 
     function today(){
         if(!is_login()) redirect('auth');
-        $tmp = $tmp = $this->Order_model->getby(['tanggal' => waktu(null, MYSQL_DATE_FORMAT), 'pesanan.status' => 'CLOSE']);
+        $tmp = $this->Order_model->getby(['pesanan.tanggal' => waktu(null, MYSQL_DATE_FORMAT), 'pesanan.status' => 'CLOSE']);
         $pesanan = [];
         foreach($tmp as $v){
             if(!isset( $pesanan[$v['token']])){

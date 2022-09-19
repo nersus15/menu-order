@@ -15,6 +15,7 @@
 	<link rel="stylesheet" href="<?= base_url("assets/css/components.css") ?>">
 	<link rel="stylesheet" href="<?= base_url("assets/css/owl.carousel.css")?>">
 	<link rel="stylesheet" href="<?= base_url("assets/css/owl.theme.default.css")?>">
+
 	<script>
 		var path = "<?= base_url() ?>";
 	</script>

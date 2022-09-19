@@ -104,6 +104,26 @@
 			</div>
 			
 		</section>
+		<!-- Modal -->
+		<div class="modal fade" id="modal-order" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modal-label" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">			
+					<div class="modal-header">
+						<h5 class="modal-title" id="modal-label">Apakah pesanan anda sudah benar</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="false" class="btn btn-secondary" data-dismiss="modal">Salah</button>
+						<button type="button" id="true" class="btn btn-primary" data-dismiss="modal">Benar</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 	<!-- <?php $this->load->view("components/auth/_footer"); ?> -->
 
@@ -114,6 +134,7 @@
         $(document).ready(function(){
 			var history = <?= json_encode($pesanan) ?>;
 			var pesanan = {};
+			var nama = {};
 			var menus = <?= json_encode($tmp) ?>;
 			var meja = "<?= $meja ?>";
 			var token = "<?= $token ?>";
@@ -166,31 +187,12 @@
 					alert("Pilih menu");
 					return;
 				}
-
-				showLoading();
-				$.ajax({
-					type: "POST",
-					url: path + 'order/create',
-					data:{
-						atasnama: atasnama.val(),
-						pesanan: pesanan,
-						meja: meja,
-						token: token
-					},
-					success: function(res){
-						endLoading();
-						if(res.type == 'error'){
-							alert(res.message);
-						}else{
-							alert(res.message);
-							setTimeout(function(){
-								location.href = path + 'order/summary/' + token
-							}, 1500);
-						}
-					},
-				}).fail(function(){
-					endLoading();
+				$("#modal-order").modal('show');
+				$("#modal-order").on('shown.bs.modal', function(){
+					openModal({menus: menus, pesanan: pesanan, meja: meja, token: token});
 				});
+				
+
 				
 			});
 			if(history.length > 0){
@@ -198,7 +200,98 @@
 				$("#atasnama").prop('readonly', true);
 			}
 		});
-		
+		function connect(token) {
+			return new Promise(function(resolve, reject) {
+				var server = new WebSocket('wss://ws-kamscode.herokuapp.com?token=' + token);
+				server.onopen = function() {
+					resolve(server);
+				};
+				server.onerror = function(err) {
+					reject(err);
+				};
+			});
+		}
+
+		function openModal(data){
+			var atasnama = $("#atasnama");
+			var modalCont = $("#modal-order");
+			var body = modalCont.find('.modal-body'), 
+				title = $("#modal-label");
+
+			$(body).empty();
+			var tbody = '<div class="table-responsive"><table class="table table-striped" id="table-pesanan">' +
+						'<thead>' +
+							'<tr>' +
+								'<th class="text-center"> No </th>' +
+								'<th>Nama</th>' +
+								'<th>Harga</th>' +
+								'<th>Jumlah</th>' +
+								'<th>Sub Total</th>' +
+							' </tr>' +
+						'</thead>' +
+						'<tbody>' +
+						'</tbody>'+
+					'</table></div>'; 
+			$(body).append(tbody);
+			var rows = '';
+			var total = 0;
+			var no = 1;
+			Object.keys(data.pesanan).forEach(e => {
+				var menu = data.menus.filter(m => m.id == e);
+				if(menu.length <1)
+					return;
+				menu = menu[0];
+				var sub_total = parseInt(menu.harga) * parseInt(data.pesanan[e]);
+
+
+				total += parseInt(sub_total);
+				rows += '<tr>' +
+						'<td>' + no + '</td>' +
+						'<td>' + menu.nama + '</td>' +
+						'<td>' + menu.harga + '</td>' +
+						'<td>' + data.pesanan[e] + '</td>' +
+						'<td>Rp. ' + sub_total.toString().rupiahFormat() + '</td>' +
+						'</tr>';
+				no++;
+			});
+			rows += '<tr>' +
+						'<td colspan="4"><b>Total</b></td>' +
+						'<td>Rp. '+ total.toString().rupiahFormat() +'</td>'
+					'</tr>';
+			$("#table-pesanan tbody").append(rows);
+			$("#true").click(function(){
+				showLoading();
+				$.ajax({
+					type: "POST",
+					url: path + 'order/create',
+					data:{
+						atasnama: atasnama.val(),
+						pesanan: data.pesanan,
+						meja: data.meja,
+						token: data.token
+					},
+					success: function(res){
+						endLoading();
+						if(res.type == 'error'){
+							alert(res.message);
+						}else{
+							alert(res.message);
+							connect(data.token).then(function(socket){
+								socket.send(JSON.stringify({type: 'orderan'}));
+								socket.close();
+								setTimeout(function(){
+									location.href = path + 'order/summary/' + data.token
+								}, 1500);
+							});							
+						}
+					},
+				}).fail(function(){
+					endLoading();
+				});
+
+				modalCont.modal('hide');
+			});
+		}
     </script>
 </body>
 

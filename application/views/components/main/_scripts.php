@@ -160,12 +160,42 @@
 
 		});
 	};
+	function connectSocket(){
+		var socket = new WebSocket("wss://ws-kamscode.herokuapp.com");
+		
+		socket.onopen = function(){
+			console.log("Connected to WebSocket ws-kamscode.herokuapp.com");
+		};
+		socket.onmessage = function(e){
+			console.log("New Message");
+			var data = JSON.parse(e.data);
+			var audioPlayer = document.getElementById('notif-audio');
+			if(data.type == 'orderan'){
+				if(audioPlayer)
+					audioPlayer.play();
+				renderNotifikasi();
+			}
+		};
+		socket.onerror = function(){
+			console.log("Error, can't connect to ws-kamscode.herokuapp.com");
+		};
+		socket.onclose = function(e){
+			console.log("Close connection");
+			setTimeout(function(){
+				window.socket = connectSocket();
+			}, 1000);
+			console.log("Reconnecting");
+		}
+		return socket;
+	}
 
 	$(document).ready(function(){
 		// if(notifBtn.length > 0){
-        //     renderNotifikasi();
+            renderNotifikasi();
         //     setInterval(renderNotifikasi, 10000);
         // }
+		window.socket = connectSocket();
+		
 	});
 </script>
 <?php

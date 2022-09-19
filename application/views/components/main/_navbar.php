@@ -1,5 +1,5 @@
 <?php
-	$userdata = sessiondata();		
+$userdata = sessiondata();
 ?>
 <div class="navbar-bg"></div>
 <nav class="navbar navbar-expand-lg main-navbar">
@@ -19,7 +19,7 @@
 				<span class="count"></span>
 			</a>
 			<div id="notifications" style="height: 300px; overflow-y: scroll;" class="dropdown-menu dropdown-menu-right">
-				
+
 			</div>
 		</li>
 		<li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
@@ -37,4 +37,8 @@
 			</div>
 		</li>
 	</ul>
+	<audio id="notif-audio">
+		<source src="<?= base_url('assets/audio/notif.wav') ?>" type="audio/wav">
+	</audio>
+
 </nav>

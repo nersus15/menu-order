@@ -28,9 +28,13 @@
 						<div class="card card-primary">
 							<div class="card-header">
 								<h4>Pesanan Atas Nama <?= $atasnama?></h4>
-                                <?php if($status == 'OPEN'):?>
+                                <?php if($status == 'PROSES'):?>
+                                    <span class="badge badge-pill badge-info">Diproses</span>
+                                    <br>
+                                <?php endif ?>
+                                <?php if($status != 'CLOSE'):?>
 					            <a href="<?= base_url('order/sign/' . $kode_meja . '/' . $token) ?>" class="btn btn-primary" id="order" style="text-align: center;">Tambah Pesanan</a>
-                                <?php else: ?>
+                                <?php elseif($status == 'CLOSE'): ?>
 					            <a href="<?= base_url('order') ?>" class="btn btn-primary" id="order" style="text-align: center;">Pesan Lagi</a>
                                 <?php endif ?>
 							</div>
@@ -85,7 +89,7 @@
 						</div>
 					</div>
 				</div>
-                <?php if($status == 'OPEN'):?>
+                <?php if($status != 'CLOSE'):?>
                     <div class="row" style="justify-content: center;">
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-qr"> Bayar Tagihan</button>
@@ -126,12 +130,40 @@
     <script>
 		
         $(document).ready(function(){
+            var token = "<?= $token ?>";
 			var history = <?= json_encode($pesanan) ?>;
             $("#modal-qr").on('shown.bs.modal', function(){
                 setTimeout(function(){
                     $(".modal-backdrop").remove();
                 }, 500)
-            })
+            });
+            function connectSocket(){
+                var socket = new WebSocket('wss://ws-kamscode.herokuapp.com?receiver=' + token)
+                socket.onopen = function(event) { 
+                    console.log("connected");	
+                }
+                socket.onmessage = function(e) {
+                    console.log("New Message");
+                    var data = JSON.parse(e.data);
+                    if(data.type == 'pelanggan'){
+                        location.reload();
+                    }
+                }
+                
+                socket.onerror = function(event){
+                    console.log("Err");
+                };
+                socket.onclose = function(event){
+                    console.log("close");
+                    setTimeout(function(){
+                        window.socket = connectSocket();
+                    }, 1000);
+                    console.log("reconnectig...");
+                };
+                return socket;
+            }
+
+            connectSocket();
 		});
 		
     </script>

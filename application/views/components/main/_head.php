@@ -30,6 +30,8 @@
 
 	<script src="<?= base_url("assets/js/kamscore/js/Kamscore.js"); ?>"></script>
 	<script src="<?= base_url("assets/js/kamscore/js/uihelper.js"); ?>"></script>
+	<script src="<?= base_url("assets/js/socket.io.js") ?>"></script>
+
 
 	<?php
 	if (isset($this->params))

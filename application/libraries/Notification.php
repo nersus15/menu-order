@@ -10,8 +10,8 @@ class Notification {
             ->from('notifikasi');
 
         if(is_login()){
-            $q->where("(jenis = 'global' and role = '". sessiondata('login', 'user_role') ."')")
-                ->or_where("(jenis = 'personal' and user='" . sessiondata('login', 'id_user') . "')")
+            $q->where("(jenis = 'global' and role = '". sessiondata('login', 'role') ."')")
+                ->or_where("(jenis = 'personal' and user='" . sessiondata('login', 'id') . "')")
                 ->order_by('dibuat', 'DESC');
         }
         $tmp = $q->get()->result(); 
@@ -22,7 +22,7 @@ class Notification {
 
     function create($data, $batch = false){
         foreach($data as $d){
-            $d['pembuat'] = is_login() ? sessiondata('login', 'id_user') : null;
+            $d['pembuat'] = is_login() ? sessiondata('login', 'id') : null;
             $this->ci->db->insert('notifikasi', $d);
         }
     }

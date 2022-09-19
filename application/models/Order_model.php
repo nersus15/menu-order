@@ -11,7 +11,8 @@
                 $q->select('menus.nama, meja.kode as kode_meja, menus.harga, menus.jenis, menus.gambar, (menus.harga * SUM(pesanan.jumlah)) as sub_total, SUM(pesanan.jumlah) as jmlh')
                     ->join('menus', 'menus.id = pesanan.menu')
                     ->join('meja', 'meja.id = pesanan.meja')
-                    ->group_by('pesanan.menu');
+                    ->group_by('pesanan.menu')
+                    ->order_by('pesanan.tanggal');
             }
 
             if(!empty($where)){
@@ -39,7 +40,7 @@
         
 
         function cekToken($token){
-            $p = $this->db->where('status', 'OPEN')
+            $p = $this->db->where_in('status', ['OPEN', 'PROSES'])
                 ->where('token', $token)
                 ->where('tanggal', waktu(null, MYSQL_DATE_FORMAT))
                 ->get('pesanan')->num_rows();
@@ -60,6 +61,7 @@
         }
         function create($pesanan, $atasnama, $meja, $token){
             $kodes = $this->createId(count($pesanan));
+            $menuids = [];
             $tmp = [
                 'meja' => $meja, 
                 'atasnama' => $atasnama,
@@ -68,24 +70,43 @@
                 'status' => 'OPEN',
             ];
 
+            $pesan =  "Pesanan untuk meja ". $meja ." atas nama <b>" . kapitalize($atasnama) . '</b> Daftar pesanan: <ol>';
             $newData = [];
             foreach($pesanan as $k => $v){
                 $tmp['menu'] = $k;
                 $tmp['jumlah'] = $v;
                 $newData[] = $tmp;
+                $menuids[$k] = $v;
             }
+            $menus = $this->db->select('nama, id')->where_in('id', array_keys($menuids))->get('menus')->result();
+            foreach($menus as $m){
+                $pesan .= "<li>" . $m->nama . ' '. $menuids[$m->id] . ' porsi</li>';
+            }
+            $pesan .= "</ol>";
             for ($i=0; $i < count($pesanan); $i++) { 
                 $newData[$i]['id'] = $kodes[$i];
             }
 
             try {
                 $this->db->insert_batch('pesanan', $newData);
-                
+                 // Tandai Meja Terisi
+                $this->db->where('id', $meja)->update('meja', ['status' => 'TERISI']);
+
                 if(!file_exists(get_path(ASSET_PATH . 'img/qr/' . $token . '.png'))){
                     require_once APPPATH.'third_party/phpqrcode/qrlib.php'; 
                     //output gambar langsung ke browser, sebagai PNG
                     QRcode::png($token . "=" . $meja, get_path(ASSET_PATH . 'img/qr/' . $token . '.png')); 
                 }
+
+                // Notifikasi
+                
+                $this->db->insert('notifikasi', [
+                    'pesan' =>$pesan,
+                    'id' => random(8),
+                    'jenis' => 'global',
+                    'role' => 'Kasir',
+                    'link' => 'order/realtime'
+                ]);
                 response("Berhasil membuat pesanan");
             } catch (\Throwable $th) {
                 response("Gagal membuat pesanan", 500);
@@ -97,6 +118,11 @@
             
             $this->db->where('token', $token)->update('pesanan', ['status' => 'CLOSE', 'pencatat' => sessiondata('login', 'username')]);
             $this->db->where('id', $meja)->update('meja', ['status' => 'KOSONG']);
+        }
+        function proses($token){
+            if(!$this->cekToken($token)) response("Token invalid");
+            
+            $this->db->where('token', $token)->update('pesanan', ['status' => 'PROSES', 'pencatat' => sessiondata('login', 'username')]);
         }
         function report($where = []){
             $q = $this->db->select('pesanan.*, menus.nama, menus.harga, menus.jenis')

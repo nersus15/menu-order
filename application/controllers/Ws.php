@@ -14,7 +14,7 @@ class Ws extends CI_Controller{
         $this->load->model('Order_model');
         if(!is_login()) response('Anda belum login', 403);
         if($detail == 0)
-            $tmp = $this->Order_model->getby(['tanggal' => waktu(null, MYSQL_DATE_FORMAT), 'pesanan.status' => 'OPEN'], false);
+            $tmp = $this->Order_model->getby(['tanggal' => waktu(null, MYSQL_DATE_FORMAT), 'pesanan.status != "CLOSE"'], false);
         else
             $tmp = $this->Order_model->getby(['token' => $token]);
 
@@ -24,6 +24,7 @@ class Ws extends CI_Controller{
                 $pesanan[$v['token']] = array(
                     'atasnama' => $v['atasnama'],
                     'meja' => $v['meja'],
+                    'status' => $v['status']
                 );
             }
         }
@@ -58,4 +59,5 @@ class Ws extends CI_Controller{
         response(['data' => $this->Order_model->dashboard($jenis)]);
 
     }
+
 }
