@@ -20,7 +20,7 @@
             $qrcode =  random(10);
             $codeContents = base_url('order/sign/' . $qrcode); 
             //output gambar langsung ke browser, sebagai PNG
-            QRcode::png($codeContents, get_path(ASSET_PATH . 'img/qr/' . $qrcode . '.png')); 
+            QRcode::png($codeContents, get_path(ASSET_PATH . 'img/qr/' . $qrcode . '.png'),  QR_ECLEVEL_L, 15, 1); 
             $data = [
                 'id' => $current,
                 'kode' => $qrcode,

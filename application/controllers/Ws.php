@@ -26,6 +26,8 @@ class Ws extends CI_Controller{
                     'meja' => $v['meja'],
                     'status' => $v['status']
                 );
+            }else if(isset($pesanan[$v['token']]) && $pesanan[$v['token']]['status'] == 'PROSES' && $v['status'] == 'OPEN'){
+                $pesanan[$v['token']]['status'] = 'OPEN';
             }
         }
         response(['data' => $detail == 0 ? $pesanan : $tmp]);
@@ -59,5 +61,51 @@ class Ws extends CI_Controller{
         response(['data' => $this->Order_model->dashboard($jenis)]);
 
     }
+    function file($tipe, $file){
+        // open the file in a binary mode
+        $path = ASSET_PATH;
+        if($tipe == 'qr')
+            $path .= 'img' . DIRECTORY_SEPARATOR . 'qr' . DIRECTORY_SEPARATOR;
+        $path .= $file;
 
+        if($tipe == 'qr') $path .= '.png';
+        $name = get_path($path);
+        $fp = fopen($name, 'rb');
+
+        // send the right headers
+        header("Content-Type: image/png");
+        header("Content-Length: " . filesize($name));
+
+        // dump the picture and stop the script
+        fpassthru($fp);
+        exit;
+    }
+    function struk($token){
+        $this->load->model('Order_model');
+        $tmp = $this->Order_model->getby(['token' => $token]);
+        $pesanan = [];
+
+        foreach ($tmp as $key => $value) {
+            if(isset($pesanan[$value['jenis']])){
+                $pesanan[$value['jenis']][] = $value;
+            }else{
+                $pesanan[$value['jenis']] = [$value];
+            }
+        }
+
+        $data = [
+            "title" => "Pesanan Anda",
+            'pesanan' => $pesanan,
+            'token' => $token,
+            'atasnama' => $tmp[0]['atasnama'],
+            'kode_meja' => $tmp[0]['kode_meja'],
+            'status' => $tmp[0]['status'],
+            'tgl' => $tmp[0]['tanggal'],
+        ];
+        $html = $this->load->view("reports/struk", $data, true);   
+        $this->load->helper('html2pdf');
+		$this->load->model("Order_model");
+		buat_pdf($html, "Struk Pesanan Atas Nama " . $data['atasnama'] . ' Tgl ' . $data['tgl']);
+
+    }
 }

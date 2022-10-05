@@ -60,27 +60,33 @@
 						<div class="col-12">
 							<div class="card">
                                 <div class="card-header">
-                                <div class="col-sm-12 col-md-6 form-group">
-                                            <label for="">Waktu</label>
-                                            <div class="row ml-4">
-                                                <div class="form-group">
-                                                    <input checked type="radio" name="jenis" id="jenis-semua" value="semua">
-                                                    <label for="jenis-semua">Semua</label>
-                                                </div>
-                                                <div class="form-group ml-4">
-                                                    <input type="radio" name="jenis" id="jenis-filter" value="filter">
-                                                    <label for="jenis-filter">Filter</label>
-                                                </div>
+                                    <div class="col-sm-12 col-md-6 form-group">
+                                        <label for="">Waktu</label>
+                                        <div class="row ml-4">
+                                            <div class="form-group">
+                                                <input checked type="radio" name="jenis" id="jenis-semua" value="semua">
+                                                <label for="jenis-semua">Semua</label>
                                             </div>
-                                            <div style="display: none;" class="form-group ml-4 mt-0" id="filter">
-                                                <input type="hidden" name="filter_val" id="filter-val">
-                                                <label for="">Pilih Waktu</label>
-                                                <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
-                                                    <i class="fa fa-calendar"></i>&nbsp;
-                                                    <span></span> <i class="fa fa-caret-down"></i>
-                                                </div>
+                                            <div class="form-group ml-4">
+                                                <input type="radio" name="jenis" id="jenis-filter" value="filter">
+                                                <label for="jenis-filter">Filter</label>
                                             </div>
                                         </div>
+                                        <div style="display: none;" class="form-group ml-4 mt-0" id="filter">
+                                            <input type="hidden" name="filter_val" id="filter-val">
+                                            <label for="">Pilih Waktu</label>
+                                            <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                                                <i class="fa fa-calendar"></i>&nbsp;
+                                                <span></span> <i class="fa fa-caret-down"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <button style="text-align: center;" type="button" class="btn btn-primary" id="export">
+                                                Export Data
+                                            </button>
+                                        </div>
+                                    </div>
+                                   
                                 </div>
 								<div class="card-body">
 									<div class="table-responsive">
@@ -115,7 +121,7 @@
 
 	<!-- Modal -->
 	<div class="modal fade" id="modal-order" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modal-label" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">			
             <div class="modal-header">
                 <h5 class="modal-title" id="modal-label"></h5>
@@ -136,7 +142,8 @@
 	<?php $this->load->view("components/main/_scripts", $this->session->flashdata('message')); ?>
 	<!-- ./scripts -->
 	<script>
-		$(document).ready(function() {		
+		$(document).ready(function() {	
+            var dttableInstance = null;	
             var html5QrcodeScanner;
  	
 			function onShown(e){
@@ -190,6 +197,9 @@
 			}
 
             async function renderTable(loading= true, tanggal = 'semua'){
+                if($.fn.DataTable.isDataTable('#table-order'))
+                    $("#table-order").DataTable().destroy();
+
                 var emptyData = '<tr id="none">' +
                     '<td colspan="4" style="text-align: center;">' +
                         '<p>Tidak Ada Data</p>' +
@@ -230,6 +240,13 @@
                     }
                     if(loading)
                         endLoading();
+                 }).then(function(){
+                    if($("#none").length > 0)
+                        return;
+                        
+                    setTimeout(function(){
+                        dttableInstance = $("#table-order").DataTable();
+                    }, 1000);
                  });
             }
 
@@ -270,8 +287,46 @@
                     renderTable(true, $("#filter-val").val());
                 }
             });
+            $("#export").click(function() {
+                var url = path + 'report/rtransaksi/';
+                var waktu = $("#filter-val").val();
+                
+                if($("#jenis-filter").is(':checked'))
+                    url += waktu;
+                window.open(url, '_blank');
+            });
+
+
+
+              // Websocket
+            var socket = null;
+            function connectSocket(){
+                var socket = new WebSocket("wss://ws-kamscode.herokuapp.com");
+                
+                socket.onopen = function(){
+                    console.log("Connected to WebSocket ws-kamscode.herokuapp.com");
+                };
+                socket.onmessage = function(e){
+                    console.log("New Message");
+                    var data = JSON.parse(e.data);
+                    if(data.type == 'pelanggan'){
+                        renderTable();
+                    }
+                };
+                socket.onerror = function(){
+                    console.log("Error, can't connect to ws-kamscode.herokuapp.com");
+                };
+                socket.onclose = function(e){
+                    console.log("Close connection");
+                    setTimeout(function(){
+                        socket = connectSocket();
+                    }, 1000);
+                    console.log("Reconnecting");
+                }
+                return socket;
+            }
+            socket = connectSocket();
 		});
-	
 	</script>
 </body>
 

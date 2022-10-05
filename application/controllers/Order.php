@@ -102,7 +102,8 @@ class Order extends CI_Controller{
             'token' => $token,
             'atasnama' => $tmp[0]['atasnama'],
             'kode_meja' => $tmp[0]['kode_meja'],
-            'status' => $tmp[0]['status']
+            'status' => $tmp[0]['status'],
+            'tgl' => $tmp[0]['tanggal']
         ];
         $this->load->view("order/summary", $data);       
     }

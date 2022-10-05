@@ -127,11 +127,8 @@
 			if(unreadNotif.length == 0) return;
 			var ids = unreadNotif.map(n => n.id);
 			$.post(path + 'ws/baca_notif/all', {ids: ids}).then(res => {
-					notif.forEach((n, i) => {
-						if(ids.includes(n.id));
-							notif[i].dibaca = res.dibaca;
-					});
-				});
+				renderNotifikasi();
+			});
 		});
 		$("#notifications").find('a.nitem').click(function(e){
 			e.preventDefault();
@@ -194,7 +191,9 @@
             renderNotifikasi();
         //     setInterval(renderNotifikasi, 10000);
         // }
-		window.socket = connectSocket();
+
+		if(logininfo.role == 'Kasir')
+			window.socket = connectSocket();
 		
 	});
 </script>

@@ -4,7 +4,12 @@
 <!-- head -->
 <?php $this->load->view("components/main/_head"); ?>
 <!-- ./head -->
-
+<style>
+	table{
+		border-collapse:separate; 
+  		border-spacing: 0 1em;
+	}
+</style>
 <body>
 	<div id="app">
 		<div class="main-wrapper main-wrapper-1">
@@ -59,18 +64,18 @@
 											<tbody>
 												<?php if(!empty($menus)): $n = 1; ?>
 													<?php foreach ($menus as $k => $m) : ?>
-														<tr style="background-color: grey;" class="group mt-2 mb-2">
-															<td colspan="6" style="height: 30px; color: white;"><?= kapitalize($k) ?></td>
+														<tr style="background-color: #F0EFEF;" class="group mt-2 mb-2">
+															<td colspan="6" style="height: 30px; text-align: center;"><?= kapitalize($k) ?></td>
 														</tr>
 														<?php foreach($m as $v): ?>
-															<tr>
+															<tr class="m-5">
 																<td><?= $n ?></td>
 																<td><?= kapitalize($v['nama']) ?></td>
 																<td><?= rupiah_format($v['harga']) ?></td>
 																<td><?= kapitalize($v['jenis']) ?></td>
 																<td>
 																	<?php if(!empty($v['gambar']) && file_exists(get_path(ASSET_PATH . 'img/products/' . $v['gambar']))): ?>
-																		<img style="width: 100%;" src="<?= base_url('assets/img/products/' . $v['gambar']) ?>">
+																		<img style="width: 100px;" src="<?= base_url('assets/img/products/' . $v['gambar']) ?>">
 																	<?php else:?>
 																		Tidak ada gambar
 																	<?php endif?>

@@ -28,14 +28,13 @@
 						<div class="card card-primary">
 							<div class="card-header">
 								<h4>Pesanan Atas Nama <?= $atasnama?></h4>
-                                <?php if($status == 'PROSES'):?>
-                                    <span class="badge badge-pill badge-info">Diproses</span>
-                                    <br>
-                                <?php endif ?>
+								<h5>Tanggal:  <?= $tgl?></h5>
+                               
                                 <?php if($status != 'CLOSE'):?>
-					            <a href="<?= base_url('order/sign/' . $kode_meja . '/' . $token) ?>" class="btn btn-primary" id="order" style="text-align: center;">Tambah Pesanan</a>
+					                <a href="<?= base_url('order/sign/' . $kode_meja . '/' . $token) ?>" class="btn btn-primary" id="order" style="text-align: center;">Tambah Pesanan</a>
                                 <?php elseif($status == 'CLOSE'): ?>
-					            <a href="<?= base_url('order') ?>" class="btn btn-primary" id="order" style="text-align: center;">Pesan Lagi</a>
+                                    <a href="<?= base_url('order') ?>" class="btn btn-primary" id="order" style="text-align: center;">Pesan Lagi</a>
+                                    <a target="_blank" href="<?= base_url('ws/struk/' . $token) ?>" class="btn btn-info ml-2" id="struk" style="text-align: center;">Download Resi</a>
                                 <?php endif ?>
 							</div>
 
@@ -62,7 +61,7 @@
                                                 <?php foreach($m as $v): ?>
                                                     <tr>
                                                         <td><?= $n ?></td>
-                                                        <td><?= kapitalize($v['nama']) ?></td>
+                                                        <td><?= $v['status'] == 'PROSES' ? '<span class="badge badge-pill badge-info badge-xs">diproses</span>' : null ?> <?= kapitalize($v['nama']) ?></td>
                                                         <td><?= rupiah_format($v['harga']) ?></td>
                                                         <td><?= $v['jmlh'] ?></td>
                                                         <td><?= rupiah_format($v['sub_total']) ?></td>

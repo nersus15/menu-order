@@ -11,7 +11,7 @@
                 $q->select('menus.nama, meja.kode as kode_meja, menus.harga, menus.jenis, menus.gambar, (menus.harga * SUM(pesanan.jumlah)) as sub_total, SUM(pesanan.jumlah) as jmlh')
                     ->join('menus', 'menus.id = pesanan.menu')
                     ->join('meja', 'meja.id = pesanan.meja')
-                    ->group_by('pesanan.menu')
+                    ->group_by('pesanan.token,pesanan.menu')
                     ->order_by('pesanan.tanggal');
             }
 

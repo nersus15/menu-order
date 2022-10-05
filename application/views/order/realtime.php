@@ -94,7 +94,7 @@
 
 	<!-- Modal -->
 	<div class="modal fade" id="modal-order" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modal-label" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">			
             <div class="modal-header">
                 <h5 class="modal-title" id="modal-label"></h5>
@@ -149,9 +149,12 @@
                         var no = 1;
                         data.data.forEach(e => {
                             total += parseInt(e.sub_total);
+                            var badge = null;
+                            if(e.status == 'PROSES')
+                                badge = ' <span class="badge badge-pill badge-info badge-xs">Sudah diproses</span>';
                             rows += '<tr>' +
                                     '<td>' + no + '</td>' +
-                                    '<td>' + e.nama + '</td>' +
+                                    '<td>' + e.nama + badge + '</td>' +
                                     '<td>' + e.harga + '</td>' +
                                     '<td>' + e.jmlh + '</td>' +
                                     '<td>Rp. ' + e.sub_total.toString().rupiahFormat() + '</td>' +
@@ -222,13 +225,14 @@
                         Object.keys(data).forEach(e => {
                             var rowdata = data[e];
                             var display = rowdata.status == 'PROSES' ? 'none' : 'block';
+                            var display2 = rowdata.status == 'PROSES' ? 'block' : 'none';
                             rows += '<tr>' +
                                 '<td>' + no + '</td>'+
                                 '<td>' + e + '</td>'+
                                 '<td>' + rowdata.atasnama + '</td>' +
                                 '<td>' + rowdata.meja + '</td>' +
                                 '<td class="row">' +
-                                 '<button type="button" data-meja ="'+ rowdata.meja +'" data-token="' + e +'" class="bayar btn btn-primary btn-sm ml-2">Bayar</button>' +
+                                 '<button type="button" style="display:'+ display2 +'" data-meja ="'+ rowdata.meja +'" data-token="' + e +'" class="bayar btn btn-primary btn-sm ml-2">Bayar</button>' +
                                  '<button style="display:'+ display +'" type="button" data-meja ="'+ rowdata.meja +'" data-token="' + e +'" class="proses btn btn-warning btn-sm ml-2">Proses</button>' +
                                  '<button type="button" data-token="' + e +'" class="detail btn btn-info btn-sm ml-2">Detail</button>' +
                                 '</td>' + 

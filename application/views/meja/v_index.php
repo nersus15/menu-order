@@ -81,10 +81,11 @@
 															<td><?= $m['id'] ?></td>
 															<td><?= $m['kode'] ?></td>
 															<td><span class="badge badge-<?= $m['status'] == 'KOSONG' ? 'success' : 'danger' ?>"><?= $m['status'] ?></span></td>
-															<td><img style="width: 100%;" src="<?= base_url('assets/img/qr/' . $m['kode'] . '.png') ?>"></td>
+															<td><img style="width: 200px;" src="<?= base_url('ws/file/qr/' . $m['kode']) ?>"></td>
 															<?php if(is_login('Kasir')): ?>
 															<td class="action">
 																<button type="button" data-id="<?= $m['id'] ?>" data-kode="<?= $m['kode'] ?>" class="remove btn btn-danger btn-xs ml-2"><i class="fas fa-minus"></i></button>
+																<a target="_blank" download="QR Code Meja <?= $m['id'] ?>.png" href="<?= base_url('ws/file/qr/' . $m['kode']) ?>" class="download btn btn-info btn-xs ml-2"><i class="fas fa-download"></i></a>
 															</td>
 															<?php endif ?>
 														</tr>
@@ -128,7 +129,8 @@
 				}else if(tr.length == 1){
 					$(tr[tr.length - 1]).find('.action').prepend(
 						'<button type="button" id="add" class="btn btn-primary btn-xs mr-2"><i class="fas fa-plus"></i></button>'
-					)
+					);
+					
 				}else if(tr.length == 0){
 					$('#table-meja tbody').append(
 						'<tr id="none">' +
@@ -153,9 +155,10 @@
 								'<td>' + data['id'] + '</td>'+
 								'<td>' + data['kode'] + '</td>'+
 								'<td><span class="badge badge-success' + '">' + data['status'] + '</span></td>'+
-								'<td><img style="width: 100%;" src="' + path + 'assets/img/qr/' + data['kode'] + '.png' + '"></td>'+
+								'<td><img style="width: 200px;" src="' + path + 'assets/img/qr/' + data['kode'] + '.png' + '"></td>'+
 								'<td class="action">' +
 									'<button type="button" data-id="'+ data['id'] +'" data-kode="'+ data['kode'] +'" class="remove btn btn-danger btn-xs"><i class="fas fa-minus"></i></button>' +
+									'<a target="_blank" download="QR Code Meja ' + data['id'] + '.png" href="'+ path + 'ws/file/qr/' + data['kode'] +'" class="download btn btn-info btn-xs ml-2"><i class="fas fa-download"></i></a>'+
 								'</td>'+
 							'</tr>';
 						body.append(row);

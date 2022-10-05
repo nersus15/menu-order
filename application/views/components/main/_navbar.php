@@ -14,6 +14,7 @@ $userdata = sessiondata();
 		</div> -->
 	</form>
 	<ul class="navbar-nav navbar-right">
+		<?php if(is_login('Kasir')): ?>
 		<li id="notificationButton" class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
 				<i class="fas fa-bell"></i>
 				<span class="count"></span>
@@ -22,6 +23,7 @@ $userdata = sessiondata();
 
 			</div>
 		</li>
+		<?php endif ?>
 		<li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
 				<img style="height: 30px;" alt="image" src="<?= base_url("assets/img/avatar/" . $userdata['gambar']) ?>" class="rounded-circle mr-1">
 				<div class="d-sm-none d-lg-inline-block">Hi, <?= $userdata['nama_lengkap']; ?></div>

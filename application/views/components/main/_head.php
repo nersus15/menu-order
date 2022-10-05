@@ -68,5 +68,6 @@
 	?>
 	<script>
 		var path = "<?= base_url() ?>";
+		var logininfo = <?= json_encode(sessiondata()) ?>;
 	</script>
 </head>

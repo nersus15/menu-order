@@ -22,7 +22,6 @@
 
 				<li class="menu-header">Laporan</li>
 				<li class="<?= ($this->uri->segment(2) == 'list') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("order/list") ?>"><i class="fas fa-file"></i> <span>Rekap Penjualan</span></a></li>
-				<li class="<?= ($this->uri->segment(3) == 'transaksi') ? 'active' : '' ?>"><a class="nav-link" href="<?= base_url("report/data/transaksi") ?>"><i class="fas fa-file"></i> <span>Export Data Penjualan</span></a></li>
 				<li class="menu-header">Pengguna</li>
 				<li><a class="nav-link" href="<?= base_url("profile") ?>"><i class="fas fa-user-circle"></i> <span>Profil Saya</span></a></li>
 			</ul>
